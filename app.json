@@ -12,7 +12,8 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "io.github.dada1smo.cypher"
+      "bundleIdentifier": "io.github.dada1smo.cypher",
+      "appleTeamId": "7GS235GTJU"
     },
     "plugins": [
       "expo-router",

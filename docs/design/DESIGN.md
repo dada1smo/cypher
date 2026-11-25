@@ -207,3 +207,17 @@ troque o marcador ou guarde os links numa tabela `links(word_id, n, start, end, 
 **Implementado (Etapa 3)** de outro jeito: em vez de marcadores no texto, a coluna `senses.links` guarda
 JSON `[[início, fim, destino], …]` com offsets em UTF-16, e o app corta a definição por esses offsets
 (`splitGloss`). Isso evita o problema dos colchetes literais. Detalhes em `PLANO.md` (m2).
+
+---
+
+## 5. Ícone do app
+
+"Cy" em Fraunces (peso 600, `opsz 144`, `SOFT 100`, `WONK 0`, letras 4% mais juntas) na cor
+amber-500 `#F59E0B`, sobre `#111317`, centralizado. PNG 1024 quadrado, sem transparência
+e sem cantos arredondados (o iOS aplica a máscara). Referência: artboards `AppIcon` e `Favicon` do canvas.
+
+`assets/icon.png` é gerado por [`make_icon.py`](make_icon.py) (precisa de Pillow):
+
+```bash
+python3 docs/design/make_icon.py assets/fonts/Fraunces.ttf assets/icon.png
+```

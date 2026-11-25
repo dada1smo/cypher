@@ -77,7 +77,8 @@ Pendências da Etapa 3, resolvidas:
 - **Agrupar pela grafia exata:** `GROUP BY word COLLATE BINARY`, a grafia digitada primeiro.
 
 ### Etapa 4: Rodar no iPhone
-- [ ] Assinar com a conta escolhida em M9 e instalar no aparelho.
+- [x] Assinar com a conta escolhida em M9 e instalar no aparelho. Apple ID gratuito, equipe em `ios.appleTeamId` (`app.json`), build em Release pelo `xcodebuild` com `-allowProvisioningUpdates` (o `expo run:ios` não deixa o Xcode criar o perfil). Passo a passo no README. Reinstalar a cada 7 dias.
+- [x] Ícone do app (`assets/icon.png`, gerado por `docs/design/make_icon.py`; DESIGN §5).
 - [ ] Usar no dia a dia e anotar o que falta.
 
 ### Etapa 5: Polimento ⏳
@@ -101,3 +102,4 @@ Pendências da Etapa 3, resolvidas:
 | 2026-11-24 | Etapa 2 (sem simulador): projeto Expo SDK 58 na raiz, `expo-sqlite` lendo o banco embutido em `assets/`, banco aberto com `PRAGMA query_only`. |
 | 2026-11-25 | Design integrado: v1 sem "Recent" e sem favoritos, modo escuro na Etapa 5, rota `word/[word]`, resultados agrupados pela grafia exata, tokens com os nomes do DESIGN.md. Links nas definições, data do banco e fonte Fraunces ficam como pendências da Etapa 3. |
 | 2026-11-25 | Etapa 3: telas de busca, verbete e Sobre; links nas definições e tabela `meta` no banco; fontes variáveis (Fraunces `SOFT` 100, Archivo) embutidas; ícones do sistema (SF Symbols, `expo-symbols`); dump do kaikki salvo em `data/raw/` para refazer o banco sem baixar de novo. |
+| 2026-11-25 | Etapa 4: app assinado com o Apple ID gratuito e instalado num iPhone 15 (build Release, 415 MB). Ícone "Cy" do DESIGN. Ajustes da conferência no simulador: teclado do Início, links só com cor, abas que rolam com bordas esmaecidas (`expo-linear-gradient`), barra do verbete com Back e nova busca. |
