@@ -141,7 +141,7 @@ Fluxo principal da v1: **Início → digitar → resultados → verbete**. Sem t
 - **Etapa 5, não v1:** a lista "Recent" (palavra + classes gramaticais) e o botão de marcador para
   Histórico e favoritos, no canto superior direito. Os dois precisam gravar dados, e o banco do
   dicionário abre só para leitura: vão num armazenamento próprio.
-- Botão "Random word" perto do fim: um `SELECT` aleatório no banco.
+- Botão "Random word" perto do fim: um `SELECT` aleatório no banco. Como o campo abre focado, o teclado cobre o botão e o footer: tocar na área vazia fecha o teclado.
 - Footer.
 
 ### 2 · Digitando

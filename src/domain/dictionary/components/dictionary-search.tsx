@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Keyboard, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SearchField } from '@/ui/components/search-field';
 import { SoftButton } from '@/ui/components/soft-button';
 import { colors } from '@/ui/theme/colors';
@@ -33,7 +33,12 @@ export function DictionarySearch() {
         onClear={() => setQuery('')}
         style={styles.field}
       />
-      {!prefix && <SoftButton label="Random word" symbol="dice" onPress={openRandom} style={styles.random} />}
+      {!prefix && (
+        // The field opens focused, so the keyboard hides Random word and the footer: tapping the empty area closes it.
+        <Pressable accessible={false} onPress={Keyboard.dismiss} style={styles.empty}>
+          <SoftButton label="Random word" symbol="dice" onPress={openRandom} style={styles.random} />
+        </Pressable>
+      )}
       {found && found.count > 0 && <DictionaryResultList found={found} onOpen={open} />}
       {found?.prefix === prefix && found.count === 0 && <DictionaryNoResults prefix={prefix} />}
     </View>
@@ -44,5 +49,6 @@ const styles = StyleSheet.create({
   screen: { flex: 1, paddingTop: spacing[3] },
   title: { color: colors.ink, paddingHorizontal: spacing[5], paddingTop: spacing[6], paddingBottom: spacing[7] },
   field: { marginHorizontal: spacing[5], marginBottom: spacing[3] },
+  empty: { flex: 1 },
   random: { marginHorizontal: spacing[5], marginTop: 'auto', marginBottom: spacing[5] },
 });

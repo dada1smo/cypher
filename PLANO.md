@@ -59,14 +59,14 @@ Atenção para a Etapa 3: a busca ignora maiúsculas, então `dog` também traz 
 - [x] `src/layers.test.ts` verificando camadas e nomes ([app.md](docs/architecture/app.md#verificação)).
 - [x] Embutir o `.db` e abrir o banco no app (tela inicial mostra o número de palavras).
   Conferido com testes e com `npx expo export --platform ios` (o bundle inclui o banco). **Ainda não rodou num aparelho.**
-- [ ] Rodar no simulador iOS. Bloqueado: falta o Xcode, que pede atualizar o macOS. Depois: `npm run ios`.
+- [x] Rodar no simulador iOS (`npm run ios`).
 
 ### Etapa 3: Busca e definição (MVP)
 - [x] Tela de busca com resultados por prefixo, "Random word" e estado sem resultados.
 - [x] Tela de verbete: classe gramatical (abas só com mais de uma), IPA, definições com links, exemplos, etimologia, compartilhar.
 - [x] Crédito ao Wiktionary (CC BY-SA) visível no app: o footer do [DESIGN.md](docs/design/DESIGN.md#footer-footerdchtml).
 - [x] Tela Sobre (`about.tsx`).
-- [ ] Conferir as telas no simulador. O build nativo (`npm run ios`) compila e instala; falta abrir o app e comparar com o DESIGN. Se o `pod install` falhar com erro de encoding, rode com `LANG=en_US.UTF-8`.
+- [x] Conferir as telas no simulador (iPhone 18 Pro): Início, resultados, sem resultados, verbete (abas, links, etimologia) e Sobre batem com o DESIGN. Ajuste: no Início, tocar na área vazia fecha o teclado, senão "Random word" e o crédito ficavam escondidos. Se o `pod install` falhar com erro de encoding, rode com `LANG=en_US.UTF-8`. O Metro com `CI=1` não recarrega o código.
 
 Telas, tokens e comportamento seguem o [DESIGN.md](docs/design/DESIGN.md). Fora da v1: "Recent", favoritos e modo escuro (Etapa 5).
 
