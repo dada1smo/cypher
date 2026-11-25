@@ -29,10 +29,10 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 | # | Tema | Status | Notas |
 |---|------|--------|-------|
 | m1 | Biblioteca SQLite | ⏳ | `expo-sqlite` (se M7 = Expo) ou `op-sqlite`. |
-| m2 | Esquema do banco | ⏳ | Rascunho: `words(id, word, pos, ipa, etymology)` e `senses(word_id, n, gloss, example)`, com índice em `word` (case-insensitive). |
-| m3 | Campos do kaikki usados | ⏳ | Mínimo: `word`, `pos`, `senses[].glosses`, `senses[].examples`, `sounds[].ipa`, `etymology_text`. |
+| m2 | Esquema do banco | ✅ | Em uso: `words(id, word, pos, ipa, etymology)` e `senses(word_id, n, gloss, example)`, com índice em `word` (case-insensitive). |
+| m3 | Campos do kaikki usados | ✅ | Mínimo: `word`, `pos`, `senses[].glosses`, `senses[].examples`, `sounds[].ipa`, `etymology_text`. |
 | m4 | Tipo de busca | ⏳ | v1: busca por prefixo (`LIKE 'abc%'` com índice). Depois: FTS5 e tolerância a erros de digitação. |
-| m5 | Tamanho máximo do banco | ⏳ | Meta inicial: menos de 100 MB. Filtrar campos, e talvez palavras sem definição. |
+| m5 | Tamanho do banco | ✅ | Meta de menos de 100 MB abandonada: aceitamos ~320 MB. Cortamos só nomes e sobrenomes (com seus plurais). Mantidos exemplos, etimologia, lugares e formas flexionadas ("plural of dog"). |
 | m6 | Navegação e telas | ⏳ | Busca → Resultado. Histórico e favoritos ficam para depois. |
 | m7 | Áudio de pronúncia | ⏳ | Fora da v1, porque exige rede (Wikimedia Commons). |
 | m8 | Atualização dos dados | ⏳ | Rodar o script de novo e gerar uma nova versão do app. |
@@ -45,10 +45,14 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 - [x] Repositório público no GitHub: https://github.com/dada1smo/cypher
 
 ### Etapa 1: Pipeline de dados (Python)
-- [ ] Baixar o JSONL de palavras em inglês no kaikki.org.
-- [ ] Script `data/build_db.py`: JSONL → `cypher-en.db`, só com os campos de m3.
-- [ ] Teste pequeno com uma amostra de linhas → conferir o conteúdo do banco.
-- [ ] Medir o tamanho e o tempo da busca.
+- [x] Baixar o JSONL de palavras em inglês no kaikki.org (via streaming, sem salvar o dump).
+- [x] Script `data/build_db.py`: JSONL → `cypher-en.db`, só com os campos de m3.
+- [x] Testes com amostra: `python3 -m unittest discover data`.
+- [x] Medir o tamanho e o tempo da busca.
+
+Resultado (dump de 30/10/2026): 1.408.231 palavras, 1.691.110 definições, 317,5 MB.
+Busca por prefixo e abertura de verbete: ~0,1 ms. Gerar do zero leva ~30 min (quase tudo é download).
+Atenção para a Etapa 3: a busca ignora maiúsculas, então `dog` também traz `DOG` (sigla); mostrar a grafia exata primeiro.
 
 ### Etapa 2: Esqueleto do app
 - [ ] Criar o projeto (Expo ou RN, conforme M7) com TypeScript.
@@ -80,3 +84,4 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 |------|---------|
 | 2026-11-24 | M1–M6 definidos: iOS, React Native, só inglês na v1, dados do kaikki/Wiktionary, SQLite offline, custo zero. |
 | 2026-11-24 | M7–M12 definidos: Expo, `.db` embutido, Apple ID gratuito, TypeScript + Python, MIT, GitHub público desde já. |
+| 2026-11-24 | Etapa 1 concluída. Banco de inglês com ~320 MB; cortados só nomes e sobrenomes. |
