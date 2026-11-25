@@ -18,7 +18,7 @@ Listas longas (resultados de busca) usam `FlatList`, nunca `map` dentro de `Scro
 ## Estilos
 
 - `StyleSheet.create` no fim do arquivo do componente. Sem objeto de estilo inline no JSX, exceto valor que depende de prop ou estado.
-- Cor, espaçamento e tipografia só pelos tokens de `ui/theme/` (`colors.text`, `spacing[4]`). Proibido hex, `rgb()` ou número mágico de cor no componente.
+- Cor, espaçamento e tipografia só pelos tokens de `ui/theme/` (`colors.ink`, `colors.muted`, `typography.definition`), com os nomes e valores do [DESIGN.md](../design/DESIGN.md#1-tokens). Proibido hex, `rgb()` ou número mágico de cor no componente.
 - Faltou um token? Ele entra em `ui/theme/` no mesmo PR que o usa.
 - Modo escuro (Etapa 5) chega trocando os valores dos tokens, não os componentes.
 

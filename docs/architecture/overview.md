@@ -22,5 +22,6 @@ Documentos:
 
 - [Camadas do app](app.md) — `app`, `domain`, `ui`, `global`, quem importa quem e como nomear.
 - [Componentes](components.md) — estrutura, estilos, acessibilidade e testes.
+- [Design](../design/DESIGN.md) — telas, fluxos, tokens (cores, tipografia, medidas) e comportamento. Fonte para o visual; as regras de código continuam aqui.
 
 Decisões novas entram no registro do [PLANO.md](../../PLANO.md#4-registro-de-decisões); regras que valem para o código entram aqui.

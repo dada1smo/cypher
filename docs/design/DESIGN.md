@@ -1,8 +1,11 @@
 # Cypher — Design
 
-Especificação das telas e fluxos do app. Fonte visual: o canvas de design
-(https://claude.ai/artifact/K4zc6kCPQdL85SecvPrmUY). As telas estão copiadas em
+Especificação das telas e fluxos do app. As telas do canvas de design estão copiadas em
 [`screens/`](screens/) como referência.
+
+Como este doc se liga ao resto: regras de código em [docs/architecture](../architecture/overview.md),
+etapas e decisões em [PLANO.md](../../PLANO.md). Os nomes de token abaixo são os nomes no código
+(`ui/theme/`: `colors.ink`, `colors.accent`…).
 
 > **Sobre `screens/*.dc.html`:** são arquivos do canvas, não código do app. Não rodam
 > fora dele (dependem de `support.js`). Leia-os para tirar medidas, espaçamentos,
@@ -36,7 +39,8 @@ sobre fundo claro, por isso cada uso tem seu tom.
 | `link` | `rgba(180,83,9,0.55)` | `rgba(251,191,36,0.6)` | Sublinhado dos links nas definições |
 | `keyboard` | `#D1D3D9` | — | Só no mock: placeholder do teclado |
 
-Modo escuro segue o sistema (`useColorScheme`), sem configuração no app na v1.
+**Modo escuro: Etapa 5**, não v1. Vai seguir o sistema (`useColorScheme`). A coluna Escuro já fica
+nos tokens; faltam os valores escuros de `card`, `accentPressed`, `accentBorder` e `accentSoft`.
 
 ### Tipografia
 
@@ -126,14 +130,16 @@ Fluxo principal da v1: **Início → digitar → resultados → verbete**. Sem t
 | 3 | Verbete | [`Entry.dc.html`](screens/Entry.dc.html) | `src/app/word/[word].tsx` |
 | 3b | Verbete com uma só classe | [`EntryNoun.dc.html`](screens/EntryNoun.dc.html) | mesma rota do 3 |
 | 4 | Sem resultados | [`NoResults.dc.html`](screens/NoResults.dc.html) | estado do Início |
-| 5 | Histórico e favoritos | [`Saved.dc.html`](screens/Saved.dc.html) | `src/app/saved.tsx` (depois da v1) |
-| 6 | Verbete no modo escuro | [`EntryDark.dc.html`](screens/EntryDark.dc.html) | tema do 3 |
+| 5 | Histórico e favoritos | [`Saved.dc.html`](screens/Saved.dc.html) | `src/app/saved.tsx` (Etapa 5) |
+| 6 | Verbete no modo escuro | [`EntryDark.dc.html`](screens/EntryDark.dc.html) | tema do 3 (Etapa 5) |
 | 7 | Sobre e créditos | [`About.dc.html`](screens/About.dc.html) | `src/app/about.tsx` |
 
 ### 1 · Início
-- Título "Cypher" + botão (ícone de marcador) para Histórico e favoritos, canto superior direito.
+- Título "Cypher".
 - Campo de busca já focado ao abrir.
-- Com o teclado fechado: lista "Recent" (palavra + classes gramaticais), cada linha abre o verbete.
+- **Etapa 5, não v1:** a lista "Recent" (palavra + classes gramaticais) e o botão de marcador para
+  Histórico e favoritos, no canto superior direito. Os dois precisam gravar dados, e o banco do
+  dicionário abre só para leitura: vão num armazenamento próprio.
 - Botão "Random word" perto do fim: um `SELECT` aleatório no banco.
 - Footer.
 
@@ -142,11 +148,15 @@ Fluxo principal da v1: **Início → digitar → resultados → verbete**. Sem t
 - Linha mostra "*N* words start with “abc”".
 - Cada resultado: palavra com o prefixo digitado em negrito, classes gramaticais
   (`noun · verb`) e a primeira definição numa linha com reticências.
-- Uma palavra com várias classes é **uma** linha só (agrupar por `word`).
+- Uma palavra com várias classes é **uma** linha só, agrupada pela **grafia exata**
+  (`GROUP BY word COLLATE BINARY`): a coluna ignora maiúsculas, e sem isso `dog` e `DOG` (sigla)
+  virariam uma linha. A grafia igual à digitada vem primeiro.
 - Return abre o primeiro resultado. Footer fica sob o teclado.
 
 ### 3 · Verbete
-- Barra: "‹ Search" à esquerda; favoritar e compartilhar à direita (ícones, `accent`).
+- Barra: "‹ Search" à esquerda; compartilhar à direita (ícone, `accent`). Favoritar entra na Etapa 5.
+- Rota por palavra (`word/[word]`), não por id: o verbete junta as classes da mesma grafia, e os
+  links nas definições apontam para o texto da palavra.
 - Cabeçalho: palavra, pronúncia (IPA).
 - Abas de classe gramatical (só com mais de uma classe — ver §2).
 - Definições numeradas (número num círculo `surface` de 22); exemplo em itálico abaixo, quando houver.
@@ -165,6 +175,7 @@ Fluxo principal da v1: **Início → digitar → resultados → verbete**. Sem t
 
 ### 7 · Sobre
 - Texto curto, tabela com número de palavras, data de geração do banco e versão do app.
+  A data ainda não existe no banco: pendência da Etapa 3 no [PLANO.md](../../PLANO.md).
 - Créditos: Wiktionary, kaikki.org (wiktextract), CC BY-SA 4.0; código MIT; link para o GitHub.
 
 ---
@@ -178,4 +189,5 @@ e o app só divide o texto pelos colchetes. Só marcar links cujo destino exista
 Cuidado: algumas definições do Wiktionary já têm colchetes literais; se isso atrapalhar,
 troque o marcador ou guarde os links numa tabela `links(word_id, n, start, end, target)`.
 
-Ainda não implementado no script; é uma decisão para o `PLANO.md` (m2/m3).
+Ainda não implementado no script: pendência da Etapa 3 no [PLANO.md](../../PLANO.md) (muda m2/m3 e
+exige gerar o banco de novo).

@@ -23,4 +23,4 @@ python3 -m unittest discover data   # data pipeline tests
 
 The app needs `assets/cypher-en.db` (not in git). Build it with the command in [data/build_db.py](data/build_db.py) (~30 min, downloads ~530 MB), then run `npm run ios`.
 
-Architecture: [docs/architecture](docs/architecture/overview.md).
+Architecture: [docs/architecture](docs/architecture/overview.md). Screens and visual design: [docs/design/DESIGN.md](docs/design/DESIGN.md).

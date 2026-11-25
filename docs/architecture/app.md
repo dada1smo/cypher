@@ -6,7 +6,7 @@ Adaptado da arquitetura do app do bloco-ds. Sem essa fronteira, as telas acumula
 
 | Camada | Responsabilidade | Exemplo |
 |---|---|---|
-| `app` | Rotas do Expo Router: telas, hierarquia e layouts (`_layout.tsx`). O arquivo só lê params, redireciona e compõe peças de `domain` e `ui`. Nenhum componente, hook, query ou regra é declarado nele. | `app/word/[id].tsx` |
+| `app` | Rotas do Expo Router: telas, hierarquia e layouts (`_layout.tsx`). O arquivo só lê params, redireciona e compõe peças de `domain` e `ui`. Nenhum componente, hook, query ou regra é declarado nele. | `app/word/[word].tsx` |
 | `domain` | Regras do dicionário, uma pasta por domínio: componentes, hooks, types, utils e as queries daquele domínio. | `domain/dictionary/` |
 | `ui` | Componentes "burros" e reutilizáveis, sem termo do dicionário, mais o tema do app (`ui/theme/`). | `ui/components/search-field.tsx` |
 | `global` | O que é do app inteiro: abertura do banco, providers. A pasta só é criada no primeiro uso. | `global/db/` |
@@ -31,7 +31,7 @@ Import entre camadas usa o alias `@/<camada>/…` (`@/*` → `src/*` no `tsconfi
 ## Banco de dados
 
 - `global/db/db-provider.tsx` (`DbProvider`) abre o `.db` embutido. Não conhece tabela nenhuma. Os hooks de `domain` pegam a conexão com `useSQLiteContext()` do `expo-sqlite`, sem wrapper próprio.
-- SQL só em `domain/<nome>/data/`, uma função por consulta (`searchWords(prefix)`, `getWord(id)`), sempre com parâmetros (`?`), nunca string concatenada.
+- SQL só em `domain/<nome>/data/`, uma função por consulta (`searchWords(prefix)`, `getWord(word)`), sempre com parâmetros (`?`), nunca string concatenada.
 - Componentes não chamam o banco: usam um hook do domínio (`useSearch`, `useWord`), que chama a função de `data/`.
 - Os types do domínio descrevem o que a tela usa, não a linha do SQLite. A conversão fica na função de `data/`.
 
@@ -62,15 +62,15 @@ Nomes curtos: verbo + substantivo (`searchWords`, `getWord`), no máximo três p
 - Tela nova: arquivo em `app/`, que compõe `domain` e `ui`.
 - Regra ou consulta nova: `domain/<nome>/`.
 - Peça visual reutilizável: `ui/components/`.
-- Cor, espaçamento, tipografia: `ui/theme/`.
+- Cor, espaçamento, tipografia: `ui/theme/`, com os nomes e valores do [DESIGN.md](../design/DESIGN.md#1-tokens).
 
 Estrutura esperada na v1:
 
 ```
 src/
-  app/_layout.tsx, index.tsx (busca), word/[id].tsx (verbete)
+  app/_layout.tsx, index.tsx (busca), word/[word].tsx (verbete), about.tsx (sobre)
   domain/dictionary/{data/search-words.ts, data/get-word.ts, hooks/use-search.ts, hooks/use-word.ts,
                      types/word.ts, components/dictionary-result-list.tsx, components/dictionary-entry.tsx}
-  ui/{components/search-field.tsx, theme/colors.ts, theme/spacing.ts}
+  ui/{components/search-field.tsx, theme/colors.ts, theme/typography.ts, theme/spacing.ts}
   global/db/db-provider.tsx
 ```
