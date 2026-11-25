@@ -32,7 +32,7 @@ Listas longas (resultados de busca) usam `FlatList`, nunca `map` dentro de `Scro
 
 `x.test.tsx` ao lado de `x.tsx`, com Jest (`jest-expo`) e `@testing-library/react-native`. Testa só comportamento: o que aparece para um dado input, callbacks de toque e digitação, estados de vazio e carregando, props de acessibilidade. Busca por `getByRole`/`getByText`. Proibido assert de aparência (`toHaveStyle`, snapshot).
 
-Funções de `domain/<nome>/data/` testam contra um banco SQLite pequeno criado no teste, não o `.db` de 320 MB. Componente ou query nova entra com o seu teste.
+Funções de `domain/<nome>/data/` testam contra `createTestDb()` (`global/db/test-db.ts`): um SQLite em memória (`node:sqlite`) com o esquema lido de `data/build_db.py`, nunca o `.db` de 320 MB. Esses testes começam com `/** @jest-environment node */`. Componentes de `domain` testam mockando o hook do domínio (`jest.mock('../hooks/use-x')`). Componente ou query nova entra com o seu teste.
 
 ## Checklist de componente novo
 

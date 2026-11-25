@@ -11,7 +11,7 @@ Adaptado da arquitetura do app do bloco-ds. Sem essa fronteira, as telas acumula
 | `ui` | Componentes "burros" e reutilizáveis, sem termo do dicionário, mais o tema do app (`ui/theme/`). | `ui/components/search-field.tsx` |
 | `global` | O que é do app inteiro: abertura do banco, providers. A pasta só é criada no primeiro uso. | `global/db/` |
 
-`app` tem esse nome porque o Expo Router exige `src/app/`. Na v1 há um domínio, `dictionary` (busca por prefixo e verbete). Histórico e favoritos (Etapa 5) entram como domínios próprios.
+`app` tem esse nome porque o Expo Router exige `src/app/`. Uma camada (pasta) só é criada no primeiro uso: na Etapa 2 ainda não existe `ui/`. Na v1 há um domínio, `dictionary` (busca por prefixo e verbete). Histórico e favoritos (Etapa 5) entram como domínios próprios.
 
 **Organização interna.** `app` segue as rotas por arquivo. As outras camadas (e cada domínio) usam `components/`, `hooks/`, `utils/`, `types/`, e `data/` para queries quando fizer sentido.
 
@@ -30,7 +30,7 @@ Import entre camadas usa o alias `@/<camada>/…` (`@/*` → `src/*` no `tsconfi
 
 ## Banco de dados
 
-- `global/db/` abre o `.db` embutido e expõe a conexão (provider ou função). Não conhece tabela nenhuma.
+- `global/db/db-provider.tsx` (`DbProvider`) abre o `.db` embutido. Não conhece tabela nenhuma. Os hooks de `domain` pegam a conexão com `useSQLiteContext()` do `expo-sqlite`, sem wrapper próprio.
 - SQL só em `domain/<nome>/data/`, uma função por consulta (`searchWords(prefix)`, `getWord(id)`), sempre com parâmetros (`?`), nunca string concatenada.
 - Componentes não chamam o banco: usam um hook do domínio (`useSearch`, `useWord`), que chama a função de `data/`.
 - Os types do domínio descrevem o que a tela usa, não a linha do SQLite. A conversão fica na função de `data/`.
@@ -55,7 +55,7 @@ Nomes curtos: verbo + substantivo (`searchWords`, `getWord`), no máximo três p
 
 ## Verificação
 
-`src/layers.test.ts` (a criar na Etapa 2, junto com o projeto) falha se um import quebrar a regra de dependência, se um arquivo fugir do kebab-case ou se um arquivo de `ui`/`domain`/`global` declarar mais de um componente. Regra sem checagem se perde no primeiro atalho.
+`src/layers.test.ts` (`npm test`) falha se um import quebrar a regra de dependência, se um arquivo fugir do kebab-case ou se um arquivo de `ui`/`domain`/`global` declarar mais de um componente. Regra sem checagem se perde no primeiro atalho. A contagem de componentes procura declarações `function Foo(` e `const Foo = (` no topo do arquivo; `memo`/`forwardRef` escapam dela (marcado como `shortcut:` no teste).
 
 ## Onde cada coisa entra
 

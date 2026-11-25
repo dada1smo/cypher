@@ -28,12 +28,12 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 
 | # | Tema | Status | Notas |
 |---|------|--------|-------|
-| m1 | Biblioteca SQLite | ⏳ | `expo-sqlite` (se M7 = Expo) ou `op-sqlite`. |
+| m1 | Biblioteca SQLite | ✅ | `expo-sqlite` (`SQLiteProvider` com `assetSource`). Na primeira abertura ele copia o `.db` para os documentos do app, então o app ocupa ~2× o banco no iPhone (~640 MB). Abrir direto do bundle não é documentado; rever se o espaço incomodar. |
 | m2 | Esquema do banco | ✅ | Em uso: `words(id, word, pos, ipa, etymology)` e `senses(word_id, n, gloss, example)`, com índice em `word` (case-insensitive). |
 | m3 | Campos do kaikki usados | ✅ | Mínimo: `word`, `pos`, `senses[].glosses`, `senses[].examples`, `sounds[].ipa`, `etymology_text`. |
 | m4 | Tipo de busca | ⏳ | v1: busca por prefixo (`LIKE 'abc%'` com índice). Depois: FTS5 e tolerância a erros de digitação. |
 | m5 | Tamanho do banco | ✅ | Meta de menos de 100 MB abandonada: aceitamos ~320 MB. Cortamos só nomes e sobrenomes (com seus plurais). Mantidos exemplos, etimologia, lugares e formas flexionadas ("plural of dog"). |
-| m6 | Navegação e telas | ⏳ | Busca → Resultado. Histórico e favoritos ficam para depois. |
+| m6 | Navegação e telas | ⏳ | Busca → Resultado. Histórico e favoritos ficam para depois. Telas, tokens e comportamento: [docs/design/DESIGN.md](docs/design/DESIGN.md). |
 | m7 | Áudio de pronúncia | ⏳ | Fora da v1, porque exige rede (Wikimedia Commons). |
 | m8 | Atualização dos dados | ⏳ | Rodar o script de novo e gerar uma nova versão do app. |
 
@@ -46,7 +46,7 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 
 ### Etapa 1: Pipeline de dados (Python)
 - [x] Baixar o JSONL de palavras em inglês no kaikki.org (via streaming, sem salvar o dump).
-- [x] Script `data/build_db.py`: JSONL → `cypher-en.db`, só com os campos de m3.
+- [x] Script `data/build_db.py`: JSONL → `assets/cypher-en.db`, só com os campos de m3.
 - [x] Testes com amostra: `python3 -m unittest discover data`.
 - [x] Medir o tamanho e o tempo da busca.
 
@@ -55,10 +55,11 @@ Busca por prefixo e abertura de verbete: ~0,1 ms. Gerar do zero leva ~30 min (qu
 Atenção para a Etapa 3: a busca ignora maiúsculas, então `dog` também traz `DOG` (sigla); mostrar a grafia exata primeiro.
 
 ### Etapa 2: Esqueleto do app
-- [ ] Criar o projeto (Expo ou RN, conforme M7) com TypeScript, seguindo [docs/architecture](docs/architecture/overview.md).
-- [ ] `src/layers.test.ts` verificando camadas e nomes ([app.md](docs/architecture/app.md#verificação)).
-- [ ] Rodar no simulador iOS.
-- [ ] Embutir o `.db` e abrir o banco no app (contar linhas).
+- [x] Criar o projeto (Expo SDK 58, Expo Router, TypeScript) na raiz do repo, seguindo [docs/architecture](docs/architecture/overview.md).
+- [x] `src/layers.test.ts` verificando camadas e nomes ([app.md](docs/architecture/app.md#verificação)).
+- [x] Embutir o `.db` e abrir o banco no app (tela inicial mostra o número de palavras).
+  Conferido com testes e com `npx expo export --platform ios` (o bundle inclui o banco). **Ainda não rodou num aparelho.**
+- [ ] Rodar no simulador iOS. Bloqueado: falta o Xcode, que pede atualizar o macOS. Depois: `npm run ios`.
 
 ### Etapa 3: Busca e definição (MVP)
 - [ ] Tela de busca com resultados por prefixo.
@@ -87,3 +88,4 @@ Atenção para a Etapa 3: a busca ignora maiúsculas, então `dog` também traz 
 | 2026-11-24 | M7–M12 definidos: Expo, `.db` embutido, Apple ID gratuito, TypeScript + Python, MIT, GitHub público desde já. |
 | 2026-11-24 | Etapa 1 concluída. Banco de inglês com ~320 MB; cortados só nomes e sobrenomes. |
 | 2026-11-24 | Arquitetura do app em `docs/architecture/`: camadas `app`, `domain`, `ui`, `global` (adaptado do bloco-ds), Expo Router, SQL só em `domain/*/data/`, Jest + Testing Library. |
+| 2026-11-24 | Etapa 2 (sem simulador): projeto Expo SDK 58 na raiz, `expo-sqlite` lendo o banco embutido em `assets/`, banco aberto com `PRAGMA query_only`. |

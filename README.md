@@ -9,3 +9,18 @@ Plano e decisões: [PLANO.md](PLANO.md). Arquitetura e regras do app: [docs/arch
 
 Code: [MIT](LICENSE).
 Dictionary data: Wiktionary, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The generated database is not committed; build it with the data script.
+
+## Development
+
+Requires Node, Python 3.11+ and, for iOS, Xcode.
+
+```bash
+npm install
+npm test            # Jest: app + architecture checks
+npm run typecheck
+python3 -m unittest discover data   # data pipeline tests
+```
+
+The app needs `assets/cypher-en.db` (not in git). Build it with the command in [data/build_db.py](data/build_db.py) (~30 min, downloads ~530 MB), then run `npm run ios`.
+
+Architecture: [docs/architecture](docs/architecture/overview.md).

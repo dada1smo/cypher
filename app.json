@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Cypher",
+    "slug": "cypher",
+    "scheme": "cypher",
+    "version": "1.0.0",
+    "platforms": [
+      "ios"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "io.github.dada1smo.cypher"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-asset"
+    ]
+  }
+}

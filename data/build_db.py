@@ -6,7 +6,7 @@ Usage:
 "-" reads from stdin, so the dump can be streamed without saving it.
 pipefail makes a dropped download fail the command instead of building a short database:
   set -o pipefail; curl -sSf https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl.gz \
-    | gunzip | python3 data/build_db.py - data/cypher-en.db
+    | gunzip | python3 data/build_db.py - assets/cypher-en.db
 """
 
 import gzip
