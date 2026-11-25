@@ -36,6 +36,9 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 | m6 | Navegação e telas | ✅ | Início (busca) → Verbete (`word/[word]`) → Sobre. Sem tab bar. Histórico e favoritos na Etapa 5. Telas, tokens e comportamento: [docs/design/DESIGN.md](docs/design/DESIGN.md). |
 | m7 | Áudio de pronúncia | ⏳ | Fora da v1, porque exige rede (Wikimedia Commons). |
 | m8 | Atualização dos dados | ⏳ | Rodar o script de novo e gerar uma nova versão do app. |
+| m9 | Como os outros idiomas chegam ao app | ✅ | **Um `.db` por idioma** (`cypher-fr.db`, …). O inglês continua embutido (M8); os outros são **baixados uma vez ao ligar o idioma** e depois funcionam offline. Embutir todos dobraria o app (o inglês já ocupa ~320 MB, e o m1 copia o banco, ~2× no aparelho). O download abre o banco direto dos documentos do app, sem a cópia do m1. Exige rede só nesse momento: exceção aceita ao M5. |
+| m10 | Fonte dos dados do francês | ✅ | **Edição francesa do Wiktionary** (kaikki `frwiktionary`, dump de ~390 MB comprimido). Diferenças do inglês: sem `senses[].links` (as definições em francês não terão links), etimologia em `etymology_texts` (lista) e IPA entre barras invertidas (`\a.kœj\`). Opções avaliadas: (a) **Edição francesa do Wiktionary** (o kaikki publica a extração do fr.wiktionary): definições em francês, um dicionário monolíngue como o de inglês. (b) **Verbetes franceses do Wiktionary em inglês** (o mesmo dump do inglês, `lang_code = "fr"`, que o `build_db.py` já aceita): definições em inglês, bom para aprender o idioma, zero trabalho extra no script. O português segue a mesma decisão. |
+| m11 | Onde hospedar os `.db` para download | ✅ | **GitHub Releases** do repositório (grátis, arquivos de até 2 GB, mesma licença CC BY-SA citada na release). O app guarda só a URL e o tamanho esperado de cada idioma. |
 
 ## 3. Etapas
 
@@ -81,11 +84,22 @@ Pendências da Etapa 3, resolvidas:
 - [x] Ícone do app (`assets/icon.png`, gerado por `docs/design/make_icon.py`; DESIGN §5).
 - [ ] Usar no dia a dia e anotar o que falta.
 
-### Etapa 5: Polimento ⏳
-- Histórico (lista "Recent" no Início), favoritos, modo escuro, busca tolerante a erros. Histórico e favoritos gravam dados: precisam de um armazenamento separado do banco do dicionário, que abre só para leitura.
+### Etapa 5: Idiomas e polimento ⏳
+
+**5a. Outros idiomas (primeiro):** inglês e francês; português depois. Telas e regras: [DESIGN.md §6](docs/design/DESIGN.md#6-idiomas).
+- [x] Fechar m9, m10 e m11.
+- [ ] Gerar `cypher-fr.db` (script com o idioma como parâmetro) e publicar para download.
+- [ ] Seletor de idioma no Início: pílula no cabeçalho com menu dos idiomas habilitados; a busca e o "Random word" usam o idioma escolhido. O verbete não troca de idioma.
+- [ ] Tela "Languages": ligar/desligar dicionários, baixar com progresso e cancelar, apagar ao desligar, pelo menos um sempre ligado. Português como "Coming soon".
+- [ ] Guardar os idiomas habilitados e o último usado (armazenamento gravável, separado dos bancos, que abrem só para leitura).
+- [ ] Rota do verbete com o idioma (ex. `word/[lang]/[word]`), para links e compartilhamento apontarem para o dicionário certo.
+
+**5b. Modo escuro (junto com 5a):** segue o sistema (`useColorScheme`). Bloqueado: faltam no DESIGN os valores escuros de `card`, `accentPressed`, `accentBorder`, `accentSoft` e da pílula de idioma (a cargo do agente de design).
+
+**5c. Polimento:**
+- Histórico (lista "Recent" no Início), favoritos, busca tolerante a erros. Histórico e favoritos gravam dados: precisam de um armazenamento separado do banco do dicionário, que abre só para leitura.
 
 ### Futuro ⏳
-- Francês e português (definições em inglês, ou edições fr/pt do Wiktionary, se o kaikki as publicar).
 - Android.
 - Áudio de pronúncia.
 
@@ -103,3 +117,5 @@ Pendências da Etapa 3, resolvidas:
 | 2026-11-25 | Design integrado: v1 sem "Recent" e sem favoritos, modo escuro na Etapa 5, rota `word/[word]`, resultados agrupados pela grafia exata, tokens com os nomes do DESIGN.md. Links nas definições, data do banco e fonte Fraunces ficam como pendências da Etapa 3. |
 | 2026-11-25 | Etapa 3: telas de busca, verbete e Sobre; links nas definições e tabela `meta` no banco; fontes variáveis (Fraunces `SOFT` 100, Archivo) embutidas; ícones do sistema (SF Symbols, `expo-symbols`); dump do kaikki salvo em `data/raw/` para refazer o banco sem baixar de novo. |
 | 2026-11-25 | Etapa 4: app assinado com o Apple ID gratuito e instalado num iPhone 15 (build Release, 415 MB). Ícone "Cy" do DESIGN. Ajustes da conferência no simulador: teclado do Início, links só com cor, abas que rolam com bordas esmaecidas (`expo-linear-gradient`), barra do verbete com Back e nova busca. |
+| 2026-11-25 | Idiomas entram na Etapa 5, antes do polimento: inglês e francês, português depois. Troca de idioma só no Início, tela para escolher os idiomas habilitados. m9–m11 em aberto (um banco por idioma, baixado ao ligar; fonte do francês; hospedagem). |
+| 2026-11-25 | m9–m11 fechados: um `.db` por idioma, baixado do GitHub Releases ao ligar o idioma; francês da edição francesa do Wiktionary (definições em francês, sem links). Modo escuro sobe para junto do francês, à espera dos tokens escuros no DESIGN. |

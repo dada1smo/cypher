@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cypher — Languages</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&amp;family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&amp;display=swap">
+<style>
+body{margin:0}
+[style*="Fraunces"]{font-variation-settings:"SOFT" 100}
+a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
+</style>
+</helmet>
+<main style="width: 390px; height: 844px; box-sizing: border-box; background: #FAFAF9; color: #16181D; font-family: Archivo, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="flex-grow: 1; padding: 56px 20px 20px; display: flex; flex-direction: column; gap: 16px">
+<nav style="margin: 0 -12px">
+<a href="HomeLang.dc.html" style="display: inline-flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 8px; font-size: 16px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>Back</a>
+</nav>
+<h1 style="margin: 0; font-family: Fraunces, Georgia, serif; font-size: 32px; font-weight: 600">Languages</h1>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5B606B">Turn on the dictionaries you want on the home screen. Each one works offline once it is on this iPhone.</p>
+<ul style="list-style: none; margin: 0; padding: 0; background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 14px; display: flex; flex-direction: column">
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+<li style="{{ r.rowStyle }}">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 64px">
+<span style="flex-shrink: 0; width: 34px; height: 24px; border-radius: 6px; background: {{ r.badgeBg }}; color: {{ r.badgeInk }}; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; display: flex; align-items: center; justify-content: center">{{ r.code }}</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 17px; font-weight: 500; color: {{ r.nameInk }}">{{ r.native }}</span>
+<span style="font-size: 13px; color: #5B606B">{{ r.detail }}</span>
+</span>
+<sc-if value="{{ r.available }}" hint-placeholder-val="{{ true }}">
+<button role="switch" aria-checked="{{ r.onAttr }}" aria-label="{{ r.name }} dictionary" aria-disabled="{{ r.lockedAttr }}" onClick="{{ r.toggle }}" style="flex-shrink: 0; width: 51px; height: 31px; border: 0; border-radius: 16px; padding: 2px; background: {{ r.trackBg }}; display: flex; justify-content: {{ r.knobSide }}; cursor: pointer; opacity: {{ r.opacity }}">
+<span style="width: 27px; height: 27px; border-radius: 14px; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0,0,0,0.2)"></span>
+</button>
+</sc-if>
+<sc-if value="{{ r.soon }}" hint-placeholder-val="{{ false }}">
+<span style="flex-shrink: 0; font-size: 13px; color: #5B606B">Coming soon</span>
+</sc-if>
+</div>
+<sc-if value="{{ r.downloading }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 0 14px 46px">
+<div role="progressbar" aria-label="Downloading {{ r.name }}" aria-valuenow="{{ r.progress }}" aria-valuemin="0" aria-valuemax="100" style="flex-grow: 1; height: 4px; border-radius: 2px; background: #FEF3C7; overflow: hidden"><div style="width: {{ r.progress }}%; height: 100%; background: #D97706"></div></div>
+<button onClick="{{ r.cancel }}" style="min-height: 44px; border: 0; background: transparent; font: inherit; font-size: 14px; color: #B45309; cursor: pointer">Cancel</button>
+</div>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5B606B">{{ footnote }}</p>
+</div>
+<dc-import name="Footer" hint-size="390px,64px"></dc-import>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"frState":{"editor":"enum","options":["off","downloading","on"],"default":"off"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(p) { super(p); this.state = { en: 'on', fr: p.frState ?? 'off', progress: 42 }; }
+componentWillUnmount() { clearInterval(this.timer); }
+startDownload() {
+clearInterval(this.timer);
+this.setState({ fr: 'downloading', progress: 0 });
+// shortcut: fake progress for the prototype; the app shows real bytes received
+this.timer = setInterval(() => {
+const p = this.state.progress + 7;
+if (p >= 100) { clearInterval(this.timer); this.setState({ fr: 'on', progress: 100 }); } else this.setState({ progress: p });
+}, 250);
+}
+renderVals() {
+const s = this.state;
+const enabled = ['en', 'fr'].filter((k) => s[k] === 'on');
+const langs = [
+{ id: 'en', code: 'EN', native: 'English', name: 'English', size: '[EN SIZE]', words: '1.4M words', bundled: true },
+{ id: 'fr', code: 'FR', native: 'Français', name: 'French', size: '[FR SIZE]', words: '[FR WORDS]', bundled: false },
+{ id: 'pt', code: 'PT', native: 'Português', name: 'Portuguese', soon: true },
+];
+const rows = langs.map((l, i) => {
+const st = l.soon ? 'soon' : s[l.id];
+const on = st === 'on' || st === 'downloading';
+const locked = st === 'on' && enabled.length === 1; // the last dictionary stays on
+const detail = l.soon ? 'Portuguese'
+: st === 'downloading' ? 'Downloading… ' + s.progress + '% of ' + l.size
+: st === 'on' ? l.name + ' · ' + l.words + (l.bundled ? ' · included' : ' · ' + l.size)
+: l.name + ' · Download ' + l.size;
+return {
+...l, detail, available: !l.soon, downloading: st === 'downloading', progress: s.progress,
+onAttr: on ? 'true' : 'false', lockedAttr: locked ? 'true' : 'false',
+trackBg: on ? '#D97706' : '#D4D4D8', knobSide: on ? 'flex-end' : 'flex-start', opacity: locked ? '0.5' : '1',
+badgeBg: l.soon ? '#EFEFF1' : '#FEF3C7', badgeInk: l.soon ? '#5B606B' : '#92400E', nameInk: l.soon ? '#5B606B' : '#16181D',
+rowStyle: 'padding: 0 14px' + (i < langs.length - 1 ? '; border-bottom: 1px solid #E4E4E7' : ''),
+toggle: () => {
+if (locked) return;
+if (l.id === 'fr' && st === 'off') return this.startDownload();
+if (st === 'downloading') { clearInterval(this.timer); return this.setState({ fr: 'off' }); }
+this.setState({ [l.id]: st === 'on' ? 'off' : 'on' });
+},
+cancel: () => { clearInterval(this.timer); this.setState({ fr: 'off' }); },
+};
+});
+return {
+rows,
+footnote: enabled.length === 1 ? 'Keep at least one dictionary on. Turning a downloaded one off frees its space; turning it on again downloads it again.' : 'Turning a downloaded dictionary off frees its space; turning it on again downloads it again.',
+};
+}
+}
+</script>
+</body>
+</html>

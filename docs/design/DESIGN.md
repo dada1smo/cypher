@@ -221,3 +221,50 @@ e sem cantos arredondados (o iOS aplica a máscara). Referência: artboards `App
 ```bash
 python3 docs/design/make_icon.py assets/fonts/Fraunces.ttf assets/icon.png
 ```
+
+---
+
+## 6. Idiomas
+
+Etapa 5a do `PLANO.md`. Inglês e francês; português aparece como "Coming soon". A interface do app
+continua em inglês: o idioma escolhido muda só o **dicionário** em que se busca.
+
+| # | Tela | Arquivo |
+|---|---|---|
+| 8 | Início com seletor de idioma | [`HomeLang.dc.html`](screens/HomeLang.dc.html) |
+| 8b | Menu de idioma aberto | [`HomeLangMenu.dc.html`](screens/HomeLangMenu.dc.html) |
+| 9 | Idiomas habilitados | [`Languages.dc.html`](screens/Languages.dc.html) |
+| 9b | Baixando o francês | [`LanguagesDownloading.dc.html`](screens/LanguagesDownloading.dc.html) |
+
+### Seletor no Início
+
+- Pílula à direita do título "Cypher": fundo `accentSoft`, texto amber-800 `#92400E` (Archivo 15/600),
+  com a sigla (`EN`, fundo amber-200 `#FDE68A`, raio 5), o nome nativo (`English`, `Français`) e uma seta ▾.
+  Altura 44, raio 22. Aparece **mesmo com um só idioma**: é o caminho para habilitar outros.
+- Toque abre um menu (no app: o menu nativo do iOS, ex. `ContextMenu`/`MenuView`, ou um popover):
+  um item por idioma habilitado (nome nativo + nome em inglês, marca ✓ no atual), divisória,
+  e "Manage languages…" que abre a tela Languages.
+- Ao trocar: o campo diz "Search a French word"; a busca, os resultados e o "Random word" usam
+  só o banco desse idioma. Guardar o último idioma usado; o app abre nele.
+- O verbete **não** troca de idioma nem traduz. Os links nas definições ficam no mesmo idioma do verbete.
+- **Tag de idioma no verbete**: acima da palavra, só informativa (não é botão, sem seta): sigla
+  (Archivo 11/600, fundo amber-200 `#FDE68A`, texto amber-800 `#92400E`; no escuro fundo `#3A2E12`,
+  texto amber-400) + nome nativo (Archivo 13/500, `muted`). Ex.: `EN English`, `FR Français`.
+  Leitor de tela: "Dictionary: English". Referência: [`Entry.dc.html`](screens/Entry.dc.html).
+
+### Tela Languages
+
+- "‹ Back", título "Languages" (Fraunces 32/600), texto curto explicando que cada dicionário funciona offline
+  depois de estar no iPhone.
+- Lista num cartão `card` (raio 14): por idioma, sigla, nome nativo (17/500) e uma linha de detalhe (13, `muted`),
+  e um `Switch` à direita (trilho `accentBorder` quando ligado).
+  - Inglês: "English · 1.4M words · included" (vem no app, não baixa).
+  - Francês desligado: "French · Download [tamanho]". Ligar inicia o download.
+  - Baixando: "Downloading… 42% of [tamanho]", barra de progresso (altura 4, trilho `accentSoft`,
+    preenchimento `accentBorder`) e "Cancel". Desligar o switch também cancela.
+  - Português: sem switch, "Coming soon", nome em `muted`.
+- **Pelo menos um idioma sempre ligado**: o switch do último fica desabilitado (opacidade 0.5), e a nota
+  embaixo explica.
+- Desligar um idioma baixado apaga o arquivo e libera espaço; ligar de novo baixa de novo.
+- Se o idioma desligado for o atual do Início, o Início passa para o primeiro habilitado.
+- Erro de rede no download: a linha volta para "Download …" com uma mensagem curta ("Download failed. Try again.").

@@ -28,6 +28,7 @@ a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
 </nav>
 <div style="flex-grow: 1; overflow-y: auto; padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 18px">
 <header style="display: flex; flex-direction: column; gap: 4px">
+<p aria-label="Dictionary: {{ lang.name }}" style="margin: 0 0 4px; align-self: flex-start; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: {{ t.muted }}"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.6px; padding: 2px 5px; border-radius: 5px; background: {{ t.badgeBg }}; color: {{ t.badgeInk }}">{{ lang.code }}</span>{{ lang.name }}</p>
 <h1 style="margin: 0; font-family: Fraunces, Georgia, serif; font-size: 44px; font-weight: 600; letter-spacing: -0.8px">{{ word }}</h1>
 <p style="margin: 0; font-size: 16px; color: {{ t.muted }}"><sc-if value="{{ single }}" hint-placeholder-val="{{ false }}"><span style="font-family: Fraunces, Georgia, serif; font-style: italic; color: {{ t.ink }}">{{ posLabel }}</span> · </sc-if>{{ ipa }}</p>
 </header>
@@ -65,7 +66,7 @@ a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
 <dc-import name="Footer" dark="{{ dark }}" hint-size="390px,64px"></dc-import>
 </main>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"word":{"editor":"enum","options":["cipher","serendipity","c"],"default":"cipher"},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"word":{"editor":"enum","options":["cipher","serendipity","c"],"default":"cipher"},"lang":{"editor":"enum","options":["EN","FR"],"default":"EN"},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
 constructor(p) { super(p); this.state = { pos: 'noun', saved: false, etymOpen: false, fadeLeft: false, fadeRight: false }; }
 componentDidMount() { this.measureTabs(); }
@@ -80,8 +81,8 @@ if (fadeLeft !== this.state.fadeLeft || fadeRight !== this.state.fadeRight) this
 renderVals() {
 const dark = this.props.dark ?? false;
 const t = dark
-? { bg: '#111317', ink: '#ECEDEF', muted: '#A3A7B0', surface: '#1E2128', line: '#2A2E36', accent: '#FBBF24', tabOn: '#2C3140' }
-: { bg: '#FAFAF9', ink: '#16181D', muted: '#5B606B', surface: '#EFEFF1', line: '#E4E4E7', accent: '#B45309', tabOn: '#FFFFFF' };
+? { bg: '#111317', ink: '#ECEDEF', muted: '#A3A7B0', surface: '#1E2128', line: '#2A2E36', accent: '#FBBF24', tabOn: '#2C3140', badgeBg: '#3A2E12', badgeInk: '#FBBF24' }
+: { bg: '#FAFAF9', ink: '#16181D', muted: '#5B606B', surface: '#EFEFF1', line: '#E4E4E7', accent: '#B45309', tabOn: '#FFFFFF', badgeBg: '#FDE68A', badgeInk: '#92400E' };
 const entries = {
 cipher: { ipa: '/ˈsaɪfə/ UK · /ˈsaɪfɚ/ US', etym: 'From Middle English siphre, from Old French cifre, from Medieval Latin cifra, from Arabic ṣifr (“zero, empty”).', pos: {
 noun: [
@@ -126,6 +127,7 @@ style: 'flex: 1 0 auto; white-space: nowrap; padding: 0 14px; min-height: 40px; 
 });
 return {
 t, tabs, dark,
+lang: { EN: { code: 'EN', name: 'English' }, FR: { code: 'FR', name: 'Français' } }[this.props.lang ?? 'EN'] || { code: 'EN', name: 'English' },
 tabsRef: (el) => { this.tabsEl = el; }, onTabsScroll: () => this.measureTabs(), fadeLeft: this.state.fadeLeft, fadeRight: this.state.fadeRight, word, ipa: entries[word].ipa, etym: entries[word].etym,
 multi: keys.length > 1, single: keys.length === 1, posLabel: keys[0],
 // [word] in a gloss marks a link (kaikki: senses[].links)
