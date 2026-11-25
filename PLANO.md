@@ -90,7 +90,7 @@ Pendências da Etapa 3, resolvidas:
 - [x] Fechar m9, m10 e m11.
 - [x] Gerar `cypher-fr.db`: `python3 data/build_db.py data/raw/kaikki-fr.jsonl.gz data/out/cypher-fr.db fr` (~40 s). Dump de 25/11/2026: 2.083.570 verbetes, 2.628.098 definições, 484 MB. Busca por "a" (167 mil palavras): 111 ms no Mac.
   Mantidas as formas flexionadas (1,9 milhão das definições, sobretudo conjugações): buscar "suis" leva a "être". Sem elas o banco teria 191 MB.
-- [ ] Publicar `cypher-fr.db` no GitHub Releases (m11).
+- [x] Publicar `cypher-fr.db` no GitHub Releases (m11): release [`data-fr-2026-11-25`](https://github.com/dada1smo/cypher/releases/tag/data-fr-2026-11-25), 483.975.168 bytes, SHA-256 `3943a9c7…42a6ffb`. Um banco novo vira uma release nova (`data-fr-AAAA-MM-DD`).
 - [ ] Seletor de idioma no Início: pílula no cabeçalho com menu dos idiomas habilitados; a busca e o "Random word" usam o idioma escolhido. O verbete não troca de idioma.
 - [ ] Tela "Languages": ligar/desligar dicionários, baixar com progresso e cancelar, apagar ao desligar, pelo menos um sempre ligado. Português como "Coming soon".
 - [ ] Guardar os idiomas habilitados e o último usado (armazenamento gravável, separado dos bancos, que abrem só para leitura).
