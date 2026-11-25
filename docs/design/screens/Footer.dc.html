@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cypher — Footer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<footer style="width: 100%; height: 64px; box-sizing: border-box; padding: 10px 20px 34px; border-top: 1px solid {{ t.line }}; background: {{ t.bg }}; font-family: Archivo, system-ui, sans-serif; font-size: 12px; line-height: 20px; color: {{ t.muted }}; text-align: center">
+Works offline · Definitions from <a href="About.dc.html" style="color: {{ t.accent }}; text-decoration: none">Wiktionary</a>, CC BY-SA 4.0
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":390,"height":64}}'>
+class Component extends DCLogic {
+renderVals() {
+const t = (this.props.dark ?? false)
+? { bg: '#111317', line: '#2A2E36', muted: '#A3A7B0', accent: '#FBBF24' }
+: { bg: '#FAFAF9', line: '#E4E4E7', muted: '#5B606B', accent: '#B45309' };
+return { t };
+}
+}
+</script>
+</body>
+</html>
