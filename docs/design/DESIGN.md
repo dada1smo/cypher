@@ -240,7 +240,10 @@ continua em inglês: o idioma escolhido muda só o **dicionário** em que se bus
 
 - Pílula à direita do título "Cypher": fundo `accentSoft`, texto amber-800 `#92400E` (Archivo 15/600),
   com a sigla (`EN`, fundo amber-200 `#FDE68A`, raio 5), o nome nativo (`English`, `Français`) e uma seta ▾.
-  Altura 44, raio 22. Aparece **mesmo com um só idioma**: é o caminho para habilitar outros.
+  Altura 44, raio 22. **Opt-in: só aparece com dois ou mais idiomas habilitados.** Com só o inglês, o
+  Início fica como na v1, sem pílula.
+- Habilitar outros idiomas: linha "Languages" na tela Sobre (mesmo estilo do "Source code on GitHub"),
+  que abre a tela Languages. Com a pílula visível, o "Manage languages…" do menu também abre.
 - Toque abre um menu (no app: o menu nativo do iOS, ex. `ContextMenu`/`MenuView`, ou um popover):
   um item por idioma habilitado (nome nativo + nome em inglês, marca ✓ no atual), divisória,
   e "Manage languages…" que abre a tela Languages.
