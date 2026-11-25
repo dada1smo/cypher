@@ -17,7 +17,18 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Fraunces.ttf",
+            "./assets/fonts/Fraunces-Italic.ttf",
+            "./assets/fonts/Archivo.ttf",
+            "./assets/fonts/Archivo-Italic.ttf"
+          ]
+        }
+      ]
     ]
   }
 }

@@ -29,9 +29,9 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 | # | Tema | Status | Notas |
 |---|------|--------|-------|
 | m1 | Biblioteca SQLite | ✅ | `expo-sqlite` (`SQLiteProvider` com `assetSource`). Na primeira abertura ele copia o `.db` para os documentos do app, então o app ocupa ~2× o banco no iPhone (~640 MB). Abrir direto do bundle não é documentado; rever se o espaço incomodar. |
-| m2 | Esquema do banco | ✅ | Em uso: `words(id, word, pos, ipa, etymology)` e `senses(word_id, n, gloss, example)`, com índice em `word` (case-insensitive). |
-| m3 | Campos do kaikki usados | ✅ | Mínimo: `word`, `pos`, `senses[].glosses`, `senses[].examples`, `sounds[].ipa`, `etymology_text`. |
-| m4 | Tipo de busca | ⏳ | v1: busca por prefixo (`LIKE 'abc%'` com índice). Depois: FTS5 e tolerância a erros de digitação. |
+| m2 | Esquema do banco | ✅ | Em uso: `words(id, word, pos, ipa, etymology)`, `senses(word_id, n, gloss, example, links)` e `meta(key, value)`, com índice em `word` (case-insensitive). `senses.links` é JSON `[[início, fim, destino], …]` com offsets em UTF-16 (os índices de string do JS), só para destinos que existem em `words`. `meta` guarda `built_at` e `word_count`. |
+| m3 | Campos do kaikki usados | ✅ | `word`, `pos`, `senses[].glosses`, `senses[].examples`, `senses[].links`, `sounds[].ipa`, `etymology_text`. |
+| m4 | Tipo de busca | ⏳ | v1: busca por prefixo com intervalo no índice (`word >= 'abc' AND word < 'abc' || U+10FFFF`), que trata `%` e `_` como texto. Uma linha por grafia exata, a mais curta primeiro. Depois: FTS5 e tolerância a erros de digitação. |
 | m5 | Tamanho do banco | ✅ | Meta de menos de 100 MB abandonada: aceitamos ~320 MB. Cortamos só nomes e sobrenomes (com seus plurais). Mantidos exemplos, etimologia, lugares e formas flexionadas ("plural of dog"). |
 | m6 | Navegação e telas | ✅ | Início (busca) → Verbete (`word/[word]`) → Sobre. Sem tab bar. Histórico e favoritos na Etapa 5. Telas, tokens e comportamento: [docs/design/DESIGN.md](docs/design/DESIGN.md). |
 | m7 | Áudio de pronúncia | ⏳ | Fora da v1, porque exige rede (Wikimedia Commons). |
@@ -62,18 +62,19 @@ Atenção para a Etapa 3: a busca ignora maiúsculas, então `dog` também traz 
 - [ ] Rodar no simulador iOS. Bloqueado: falta o Xcode, que pede atualizar o macOS. Depois: `npm run ios`.
 
 ### Etapa 3: Busca e definição (MVP)
-- [ ] Tela de busca com resultados por prefixo.
-- [ ] Tela de verbete: classe gramatical, IPA, definições, exemplos, etimologia.
-- [ ] Crédito ao Wiktionary (CC BY-SA) visível no app: o footer do [DESIGN.md](docs/design/DESIGN.md#footer-footerdchtml).
-- [ ] Tela Sobre (`about.tsx`).
+- [x] Tela de busca com resultados por prefixo, "Random word" e estado sem resultados.
+- [x] Tela de verbete: classe gramatical (abas só com mais de uma), IPA, definições com links, exemplos, etimologia, compartilhar.
+- [x] Crédito ao Wiktionary (CC BY-SA) visível no app: o footer do [DESIGN.md](docs/design/DESIGN.md#footer-footerdchtml).
+- [x] Tela Sobre (`about.tsx`).
+- [ ] Conferir as telas no simulador. O build nativo (`npm run ios`) compila e instala; falta abrir o app e comparar com o DESIGN. Se o `pod install` falhar com erro de encoding, rode com `LANG=en_US.UTF-8`.
 
 Telas, tokens e comportamento seguem o [DESIGN.md](docs/design/DESIGN.md). Fora da v1: "Recent", favoritos e modo escuro (Etapa 5).
 
-Pendências a decidir na Etapa 3:
-- **Links nas definições** ([DESIGN §4](docs/design/DESIGN.md#4-impacto-nos-dados)): guardar `senses[].links` do kaikki, com marcadores na definição ou numa tabela `links`. Muda m2/m3 e exige gerar o banco de novo (~30 min).
-- **Data de geração do banco** para a tela Sobre: o banco não guarda isso. Opção: tabela `meta(key, value)` gravada pelo script.
-- **Fonte Fraunces com o eixo `SOFT`**: confirmar se o React Native no iOS aceita `fontVariationSettings`; se não, usar um arquivo estático já "Soft". Instalar `expo-font` e `@expo-google-fonts`.
-- **Agrupar resultados pela grafia exata** (`GROUP BY word COLLATE BINARY`), com a grafia digitada primeiro.
+Pendências da Etapa 3, resolvidas:
+- **Links nas definições:** coluna `senses.links` (m2). O script acha cada link do kaikki no texto da definição (palavra inteira; as sub-acepções herdam links da acepção-mãe que não aparecem no texto) e guarda só os que apontam para palavras do banco.
+- **Data de geração do banco:** tabela `meta` com `built_at` e `word_count` (contar grafias distintas no aparelho varreria o índice inteiro).
+- **Fraunces com `SOFT`:** o React Native 0.88 aceita `fontVariationSettings` no iOS. As fontes variáveis oficiais (Fraunces e Archivo, OFL) vêm do repositório `google/fonts` e ficam em `assets/fonts/`, embutidas pelo plugin `expo-font`. O `@expo-google-fonts` só tem arquivos estáticos, sem o eixo `SOFT`, e não foi usado.
+- **Agrupar pela grafia exata:** `GROUP BY word COLLATE BINARY`, a grafia digitada primeiro.
 
 ### Etapa 4: Rodar no iPhone
 - [ ] Assinar com a conta escolhida em M9 e instalar no aparelho.
@@ -99,3 +100,4 @@ Pendências a decidir na Etapa 3:
 | 2026-11-24 | Arquitetura do app em `docs/architecture/`: camadas `app`, `domain`, `ui`, `global` (adaptado do bloco-ds), Expo Router, SQL só em `domain/*/data/`, Jest + Testing Library. |
 | 2026-11-24 | Etapa 2 (sem simulador): projeto Expo SDK 58 na raiz, `expo-sqlite` lendo o banco embutido em `assets/`, banco aberto com `PRAGMA query_only`. |
 | 2026-11-25 | Design integrado: v1 sem "Recent" e sem favoritos, modo escuro na Etapa 5, rota `word/[word]`, resultados agrupados pela grafia exata, tokens com os nomes do DESIGN.md. Links nas definições, data do banco e fonte Fraunces ficam como pendências da Etapa 3. |
+| 2026-11-25 | Etapa 3: telas de busca, verbete e Sobre; links nas definições e tabela `meta` no banco; fontes variáveis (Fraunces `SOFT` 100, Archivo) embutidas; ícones do sistema (SF Symbols, `expo-symbols`); dump do kaikki salvo em `data/raw/` para refazer o banco sem baixar de novo. |

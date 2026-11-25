@@ -21,6 +21,15 @@ npm run typecheck
 python3 -m unittest discover data   # data pipeline tests
 ```
 
-The app needs `assets/cypher-en.db` (not in git). Build it with the command in [data/build_db.py](data/build_db.py) (~30 min, downloads ~530 MB), then run `npm run ios`.
+The app needs `assets/cypher-en.db` (not in git). Download the kaikki dump once (~530 MB, ~30 min) and build the database (a few minutes):
+
+```bash
+mkdir -p data/raw
+curl -sSf https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl.gz -o data/raw/kaikki-en.jsonl.gz
+python3 data/build_db.py data/raw/kaikki-en.jsonl.gz assets/cypher-en.db
+npm run ios
+```
+
+Fonts: Fraunces and Archivo (SIL Open Font License, `assets/fonts/`).
 
 Architecture: [docs/architecture](docs/architecture/overview.md). Screens and visual design: [docs/design/DESIGN.md](docs/design/DESIGN.md).

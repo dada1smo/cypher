@@ -6,7 +6,7 @@ import sqlite3
 import tempfile
 import unittest
 
-from build_db import build
+from build_db import build, find_links
 
 SAMPLE = [
     {"word": "dog", "lang_code": "en", "pos": "noun",
@@ -30,6 +30,10 @@ SAMPLE = [
     {"word": "Als", "lang_code": "en", "pos": "name", "senses": [{"glosses": ["plural of Al"]}]},
     {"word": "Koreas", "lang_code": "en", "pos": "name", "senses": [{"glosses": ["plural of Korea"]}]},
     {"word": "surname", "lang_code": "en", "pos": "noun", "senses": [{"glosses": ["A family name."]}]},
+    # Links: "doctrine" has no entry, so only the link to "dog" survives. Offsets count UTF-16 units ("🐕" is 2).
+    {"word": "puppy", "lang_code": "en", "pos": "noun",
+     "senses": [{"glosses": ["A young 🐕 dog, not a doctrine."],
+                 "links": [["dog", "dog#English"], ["doctrine", "doctrine"]]}]},
 ]
 
 
@@ -48,7 +52,7 @@ class BuildDbTest(unittest.TestCase):
         self.dir.cleanup()
 
     def test_counts_and_filtering(self):
-        self.assertEqual(self.stats, {"words": 5, "senses": 6, "skipped": 4})
+        self.assertEqual(self.stats, {"words": 6, "senses": 7, "skipped": 4})
 
     def test_personal_names_removed(self):
         rows = self.db.execute(
@@ -75,11 +79,39 @@ class BuildDbTest(unittest.TestCase):
         ).fetchall()
         self.assertEqual(senses, [(1, "A mammal.", "The dog barked."), (2, "A male dog.", None)])
 
+    def test_links_point_to_existing_words_with_utf16_offsets(self):
+        gloss, links = self.db.execute(
+            "SELECT gloss, links FROM senses JOIN words ON id = word_id WHERE word = 'puppy'"
+        ).fetchone()
+        self.assertEqual(json.loads(links), [[11, 14, "dog"]])
+        self.assertEqual(gloss.encode("utf-16-le")[22:28].decode("utf-16-le"), "dog")
+        self.assertIsNone(self.db.execute("SELECT links FROM senses WHERE gloss = 'A mammal.'").fetchone()[0])
+
+    def test_meta_has_build_date_and_word_count(self):
+        meta = dict(self.db.execute("SELECT key, value FROM meta"))
+        self.assertRegex(meta["built_at"], r"^\d{4}-\d{2}-\d{2}$")
+        self.assertEqual(meta["word_count"], "6")
+
     def test_prefix_search_is_case_insensitive_and_indexed(self):
         query = "SELECT word FROM words WHERE word LIKE ? ORDER BY word"
         self.assertEqual(self.db.execute(query, ("DOG%",)).fetchall(), [("dog",), ("Dogma",)])
         plan = " ".join(r[-1] for r in self.db.execute("EXPLAIN QUERY PLAN " + query, ("dog%",)))
         self.assertIn("words_word", plan)
+
+
+
+class FindLinksTest(unittest.TestCase):
+    def test_whole_words_in_order_without_overlaps_or_namespaces(self):
+        gloss = "Listing words; a word list in reference works."
+        links = [
+            ["reference work", "reference work"],  # inherited from a parent sense: not in this gloss
+            ["word", "word"],                       # must skip "words", match "word"
+            ["word list", "word list"],             # same start as "word": the longer one wins
+            ["reference", "w:Reference"],           # Wikipedia namespace: dropped
+            ["list", "list#Noun"],                  # inside "word list": dropped
+            ["works", "work"],
+        ]
+        self.assertEqual(find_links(gloss, links), [(17, 26, "word list"), (40, 45, "work")])
 
 
 if __name__ == "__main__":

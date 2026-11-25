@@ -17,7 +17,7 @@ const ALLOWED: Record<Layer, Layer[]> = {
   ui: ['ui'],
   global: ['global'],
 };
-const UI_PACKAGES = /^(react|react-native|expo-[\w-]+)(\/|$)/;
+const UI_PACKAGES = /^(react|react-native(-[\w-]+)?|expo-[\w-]+)(\/|$)/;
 const KEBAB_FILE = /^[a-z0-9]+(-[a-z0-9]+)*(\.test|\.d)?\.tsx?$/;
 
 function sourceFiles(dir: string): string[] {
@@ -56,7 +56,8 @@ describe.each(files)('$name', ({ file, layer }) => {
         // Files outside src/ (assets/, data/) are not a layer.
         return !relative(SRC, target).startsWith('..') && layerOf(target) !== layer;
       }
-      return layer === 'ui' && !UI_PACKAGES.test(spec);
+      // Test tooling (@testing-library, jest) is not part of the app, so tests skip the package rule.
+      return layer === 'ui' && !/\.test\.tsx?$/.test(file) && !UI_PACKAGES.test(spec);
     });
     expect(broken).toEqual([]);
   });

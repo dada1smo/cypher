@@ -1,11 +1,11 @@
-import { Stack } from 'expo-router';
-import { DictionaryWordCount } from '@/domain/dictionary/components/dictionary-word-count';
+import { DictionaryFooter } from '@/domain/dictionary/components/dictionary-footer';
+import { DictionarySearch } from '@/domain/dictionary/components/dictionary-search';
+import { Screen } from '@/ui/components/screen';
 
 export default function SearchScreen() {
   return (
-    <>
-      <Stack.Screen options={{ title: 'Cypher' }} />
-      <DictionaryWordCount />
-    </>
+    <Screen footer={<DictionaryFooter />}>
+      <DictionarySearch />
+    </Screen>
   );
 }

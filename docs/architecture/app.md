@@ -22,9 +22,11 @@ A seta significa "pode importar de":
 ```
 app    → domain, ui, global
 domain → domain (inclusive outro domínio), ui, global
-ui     → ui, react-native, expo-*
+ui     → ui, react, react-native, react-native-*, expo-*
 global → global
 ```
+
+`react-native-*` entra em `ui` por causa da safe area (`react-native-safe-area-context`), que o DESIGN exige. Arquivos de teste podem importar ferramentas de teste (`@testing-library`, `jest`) em qualquer camada.
 
 Import entre camadas usa o alias `@/<camada>/…` (`@/*` → `src/*` no `tsconfig.json`). Import relativo só dentro da mesma camada.
 
@@ -64,13 +66,23 @@ Nomes curtos: verbo + substantivo (`searchWords`, `getWord`), no máximo três p
 - Peça visual reutilizável: `ui/components/`.
 - Cor, espaçamento, tipografia: `ui/theme/`, com os nomes e valores do [DESIGN.md](../design/DESIGN.md#1-tokens).
 
-Estrutura esperada na v1:
+Estrutura da v1 (Etapa 3):
 
 ```
 src/
   app/_layout.tsx, index.tsx (busca), word/[word].tsx (verbete), about.tsx (sobre)
-  domain/dictionary/{data/search-words.ts, data/get-word.ts, hooks/use-search.ts, hooks/use-word.ts,
-                     types/word.ts, components/dictionary-result-list.tsx, components/dictionary-entry.tsx}
-  ui/{components/search-field.tsx, theme/colors.ts, theme/typography.ts, theme/spacing.ts}
-  global/db/db-provider.tsx
+  domain/dictionary/
+    data/       search-words, get-word, random-word, get-info
+    hooks/      use-search, use-word, use-info, use-open-word (navegação para um verbete)
+    utils/      split-gloss (definição → trechos com link), pos-label ("adj" → "adjective")
+    types/      word
+    components/ dictionary-search, dictionary-result-list, dictionary-result-item, dictionary-no-results,
+                dictionary-entry, dictionary-sense-item, dictionary-etymology, dictionary-about, dictionary-footer
+  ui/
+    components/ screen (safe area + footer fixo), search-field, back-button, icon-button,
+                segmented-control, soft-button, info-table, link-row
+    theme/      colors, typography, spacing
+  global/db/db-provider.tsx, test-db.ts
 ```
+
+Ícones são SF Symbols (`expo-symbols`), não SVG: o app é só iOS.

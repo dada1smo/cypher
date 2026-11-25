@@ -111,7 +111,8 @@ sombra leve. Rótulo `Noun · 3` (classe + número de definições).
 Palavras com link dentro de uma definição abrem o verbete dessa palavra.
 
 - Texto na cor normal (`ink`), para não atrapalhar a leitura.
-- Sublinhado **pontilhado**, espessura 1.5, afastado 4 do texto, cor `link`.
+- Sublinhado **pontilhado**, espessura 1.5, afastado 4 do texto, cor `link`. No app: o React Native não
+  controla espessura nem afastamento do sublinhado, então ficam os do sistema.
 - Ao tocar: fundo `accentSoft` rápido como confirmação, depois navega.
 - Ideia para depois: toque longo mostra uma prévia da primeira definição.
 - **Nem toda palavra vira link**: só as que o Wiktionary liga a outra página
@@ -175,7 +176,7 @@ Fluxo principal da v1: **Início → digitar → resultados → verbete**. Sem t
 
 ### 7 · Sobre
 - Texto curto, tabela com número de palavras, data de geração do banco e versão do app.
-  A data ainda não existe no banco: pendência da Etapa 3 no [PLANO.md](../../PLANO.md).
+  Número de palavras e data vêm da tabela `meta`, gravada pelo script.
 - Créditos: Wiktionary, kaikki.org (wiktextract), CC BY-SA 4.0; código MIT; link para o GitHub.
 
 ---
@@ -189,5 +190,6 @@ e o app só divide o texto pelos colchetes. Só marcar links cujo destino exista
 Cuidado: algumas definições do Wiktionary já têm colchetes literais; se isso atrapalhar,
 troque o marcador ou guarde os links numa tabela `links(word_id, n, start, end, target)`.
 
-Ainda não implementado no script: pendência da Etapa 3 no [PLANO.md](../../PLANO.md) (muda m2/m3 e
-exige gerar o banco de novo).
+**Implementado (Etapa 3)** de outro jeito: em vez de marcadores no texto, a coluna `senses.links` guarda
+JSON `[[início, fim, destino], …]` com offsets em UTF-16, e o app corta a definição por esses offsets
+(`splitGloss`). Isso evita o problema dos colchetes literais. Detalhes em `PLANO.md` (m2).
