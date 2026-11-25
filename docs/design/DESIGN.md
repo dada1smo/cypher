@@ -104,6 +104,12 @@ sombra leve. Rótulo `Noun · 3` (classe + número de definições).
 - **Só aparece quando a palavra tem mais de uma classe gramatical.**
 - Com uma só classe, a classe aparece em itálico (Fraunces, cor `ink`) no início da linha
   da pronúncia: *noun* · /ˌsɛɹənˈdɪpɪti/ — e as definições vêm logo abaixo.
+- **Rótulos nunca quebram nem são cortados.** Cada aba tem a largura do seu rótulo
+  (padding 14 nas laterais, uma linha só) e cresce para preencher a barra quando cabem todas
+  (`flexGrow: 1, flexShrink: 0`). Quando não cabem (ex.: "c", 6 classes), a barra **rola na horizontal**
+  (`ScrollView horizontal`, sem indicador); a última aba aparece cortada na borda, o que mostra que há mais.
+  Ao selecionar uma aba, role para deixá-la inteira à vista. Referência: [`EntryMany.dc.html`](screens/EntryMany.dc.html).
+- Rótulos por extenso: `Numeral`, `Preposition`, `Adjective` (não as siglas do kaikki).
 
 ### Links nas definições
 
@@ -130,6 +136,7 @@ Fluxo principal da v1: **Início → digitar → resultados → verbete**. Sem t
 | 2 | Digitando / resultados | [`Search.dc.html`](screens/Search.dc.html) | estado do Início (mesma tela, campo com texto) |
 | 3 | Verbete | [`Entry.dc.html`](screens/Entry.dc.html) | `src/app/word/[word].tsx` |
 | 3b | Verbete com uma só classe | [`EntryNoun.dc.html`](screens/EntryNoun.dc.html) | mesma rota do 3 |
+| 3c | Verbete com muitas classes (abas rolam) | [`EntryMany.dc.html`](screens/EntryMany.dc.html) | mesma rota do 3 |
 | 4 | Sem resultados | [`NoResults.dc.html`](screens/NoResults.dc.html) | estado do Início |
 | 5 | Histórico e favoritos | [`Saved.dc.html`](screens/Saved.dc.html) | `src/app/saved.tsx` (Etapa 5) |
 | 6 | Verbete no modo escuro | [`EntryDark.dc.html`](screens/EntryDark.dc.html) | tema do 3 (Etapa 5) |

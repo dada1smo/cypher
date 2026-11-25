@@ -32,7 +32,7 @@ a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
 <p style="margin: 0; font-size: 16px; color: {{ t.muted }}"><sc-if value="{{ single }}" hint-placeholder-val="{{ false }}"><span style="font-family: Fraunces, Georgia, serif; font-style: italic; color: {{ t.ink }}">{{ posLabel }}</span> · </sc-if>{{ ipa }}</p>
 </header>
 <sc-if value="{{ multi }}" hint-placeholder-val="{{ true }}">
-<div role="tablist" aria-label="Part of speech" style="display: flex; gap: 4px; padding: 4px; background: {{ t.surface }}; border-radius: 12px">
+<div role="tablist" aria-label="Part of speech" style="display: flex; gap: 4px; padding: 4px; background: {{ t.surface }}; border-radius: 12px; overflow-x: auto; scrollbar-width: none">
 <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="2">
 <button role="tab" aria-selected="{{ tab.selected }}" onClick="{{ tab.pick }}" style="{{ tab.style }}">{{ tab.label }}</button>
 </sc-for>
@@ -61,7 +61,7 @@ a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
 <dc-import name="Footer" dark="{{ dark }}" hint-size="390px,64px"></dc-import>
 </main>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"word":{"editor":"enum","options":["cipher","serendipity"],"default":"cipher"},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"word":{"editor":"enum","options":["cipher","serendipity","c"],"default":"cipher"},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
 constructor(p) { super(p); this.state = { pos: 'noun', saved: false, etymOpen: false }; }
 renderVals() {
@@ -81,6 +81,14 @@ verb: [
 { gloss: 'To [encode] a message using a cipher.', example: 'They ciphered every letter before sending it.' },
 ],
 } },
+c: { ipa: '/siː/', etym: 'From Middle English c, from Latin C, from Etruscan, from Ancient Greek Γ (gamma).', pos: {
+character: [{ gloss: 'The third letter of the English alphabet, written in the Latin script.', example: '' }],
+noun: [{ gloss: 'The name of the Latin-script letter C.', example: '' }],
+symbol: [{ gloss: 'The speed of light in a vacuum.', example: 'E = mc²' }],
+num: [{ gloss: 'One hundred, as a Roman numeral.', example: '' }],
+prep: [{ gloss: 'Abbreviation of circa: around, approximately.', example: 'c. 1450' }],
+adj: [{ gloss: 'Abbreviation of cold, as on a tap.', example: '' }],
+} },
 serendipity: { ipa: '/ˌsɛɹənˈdɪpɪti/', etym: 'Coined by Horace Walpole in 1754, after the Persian fairy tale The Three Princes of Serendip, whose heroes kept making discoveries by accident.', pos: {
 noun: [
 { gloss: 'An [unsought], [unintended], and unexpected but [fortunate] discovery made by accident.', example: 'Finding that book in a stranger’s house was pure serendipity.' },
@@ -92,13 +100,14 @@ const word = entries[this.props.word] ? this.props.word : 'cipher';
 const data = entries[word].pos;
 const keys = Object.keys(data);
 const pos = data[this.state.pos] ? this.state.pos : keys[0];
-const cap = (k) => k[0].toUpperCase() + k.slice(1);
+const names = { num: 'Numeral', prep: 'Preposition', adj: 'Adjective' };
+const cap = (k) => names[k] || k[0].toUpperCase() + k.slice(1);
 const tabs = keys.map((k) => {
 const on = k === pos;
 return {
 label: cap(k) + ' · ' + data[k].length, selected: on ? 'true' : 'false',
 pick: () => this.setState({ pos: k }),
-style: 'flex: 1; min-height: 40px; border: 0; border-radius: 9px; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; '
+style: 'flex: 1 0 auto; white-space: nowrap; padding: 0 14px; min-height: 40px; border: 0; border-radius: 9px; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; '
 + (on ? 'background: ' + t.tabOn + '; color: ' + t.ink + '; box-shadow: 0 1px 2px rgba(0,0,0,0.12)' : 'background: transparent; color: ' + t.muted),
 };
 });
