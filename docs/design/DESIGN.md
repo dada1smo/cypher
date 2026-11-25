@@ -112,7 +112,8 @@ Palavras com link dentro de uma definição abrem o verbete dessa palavra.
 
 - Texto na cor normal (`ink`), para não atrapalhar a leitura.
 - Sublinhado **pontilhado**, espessura 1.5, afastado 4 do texto, cor `link`. No app: o React Native não
-  controla espessura nem afastamento do sublinhado, então ficam os do sistema.
+  controla espessura nem afastamento do sublinhado; o afastamento vem da fonte, então o `Fraunces.ttf`
+  embutido foi alterado (`underlinePosition` -300 → -180, cerca de 2 do texto). A espessura fica a do sistema.
 - Ao tocar: fundo `accentSoft` rápido como confirmação, depois navega.
 - Ideia para depois: toque longo mostra uma prévia da primeira definição.
 - **Nem toda palavra vira link**: só as que o Wiktionary liga a outra página

@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   body: { flex: 1, gap: 6 },
-  // shortcut: React Native has no underline thickness or offset, so the design's 1.5 / 4 pt are not applied;
-  // revisit if the default dotted line reads too close to the text.
+  // React Native has no underline offset: iOS takes it from the font, so the embedded Fraunces.ttf has its
+  // underlinePosition raised (README). shortcut: thickness stays the system's, not the design's 1.5.
   link: { textDecorationLine: 'underline', textDecorationStyle: 'dotted', textDecorationColor: colors.link },
   linkPressed: { backgroundColor: colors.accentSoft },
 });
