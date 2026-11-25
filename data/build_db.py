@@ -1,11 +1,15 @@
 """Build the Cypher SQLite dictionary from a kaikki.org (wiktextract) JSONL dump.
 
 Usage:
-  python3 data/build_db.py <input.jsonl|input.jsonl.gz|-> <output.db>
+  python3 data/build_db.py <input.jsonl|input.jsonl.gz|-> <output.db> [lang_code, default en]
 
 Usual run, from the dump saved in data/raw/ (not in git):
   curl -sSf https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl.gz -o data/raw/kaikki-en.jsonl.gz
   python3 data/build_db.py data/raw/kaikki-en.jsonl.gz assets/cypher-en.db
+
+French, from the French edition of Wiktionary (definitions in French; downloaded by the app, not embedded):
+  curl -sSf "https://kaikki.org/frwiktionary/Fran%C3%A7ais/kaikki.org-dictionary-Fran%C3%A7ais.jsonl.gz" -o data/raw/kaikki-fr.jsonl.gz
+  python3 data/build_db.py data/raw/kaikki-fr.jsonl.gz data/out/cypher-fr.db fr
 
 "-" reads from stdin, so the dump can be streamed without saving it.
 pipefail makes a dropped download fail the command instead of building a short database:
@@ -44,6 +48,8 @@ CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 # Personal names are most of the "name" entries and useless in a dictionary.
 # Places, brands, etc. stay. Only applied to pos "name", so "last name" (noun) stays.
 PERSONAL_NAME = re.compile(r"\b(surname|given name)s?\b")
+# The French edition says it in the section title instead ("Nom de famille", "Prénom 2"...).
+PERSONAL_NAME_TITLE = re.compile(r"^(Nom de famille|Prénom)\b")
 
 def find_links(gloss, links):
     """Place kaikki's [text, target] pairs in gloss: [(start, end, target)] in code points, sorted.
@@ -92,6 +98,8 @@ def parse_entry(entry, lang_code="en"):
     """Return ((word, pos, ipa, etymology, [(gloss, example, links)]) or None to skip, had_personal_name)."""
     if entry.get("lang_code") != lang_code or not entry.get("word"):
         return None, False
+    if PERSONAL_NAME_TITLE.match(entry.get("pos_title", "")):
+        return None, True
     senses = []
     had_personal_name = False
     for s in entry.get("senses", []):
@@ -110,7 +118,9 @@ def parse_entry(entry, lang_code="en"):
     if not senses:
         return None, had_personal_name
     ipa = next((x["ipa"] for x in entry.get("sounds", []) if x.get("ipa")), None)
-    return (entry["word"], entry.get("pos"), ipa, entry.get("etymology_text"), senses), had_personal_name
+    # English edition: one etymology_text; French edition: a list of paragraphs.
+    etymology = entry.get("etymology_text") or "\n".join(entry.get("etymology_texts") or []) or None
+    return (entry["word"], entry.get("pos"), ipa, etymology, senses), had_personal_name
 
 
 def build(input_path, output_path, lang_code="en"):
@@ -174,8 +184,8 @@ def resolve_links(db):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in (3, 4):
         sys.exit(__doc__)
-    stats = build(sys.argv[1], sys.argv[2])
+    stats = build(*sys.argv[1:])
     size_mb = os.path.getsize(sys.argv[2]) / 1e6
     print(f"{stats['words']} words, {stats['senses']} senses, {stats['skipped']} skipped, {size_mb:.1f} MB")

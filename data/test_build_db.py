@@ -99,6 +99,35 @@ class BuildDbTest(unittest.TestCase):
         self.assertIn("words_word", plan)
 
 
+class FrenchEditionTest(unittest.TestCase):
+    """The French edition: etymology as a list, personal names marked in pos_title, other languages skipped."""
+
+    def test_french_entries(self):
+        sample = [
+            {"word": "accueil", "lang_code": "fr", "pos": "noun", "pos_title": "Nom commun",
+             "sounds": [{"ipa": "\\a.kœj\\"}], "etymology_texts": ["Déverbal de accueillir.", "Voir aussi accueillir."],
+             "senses": [{"glosses": ["Action d’accueillir."], "examples": [{"text": "Un accueil chaleureux."}]}]},
+            {"word": "Dupont", "lang_code": "fr", "pos": "name", "pos_title": "Nom de famille",
+             "senses": [{"glosses": ["Nom de famille."]}]},
+            {"word": "Marie", "lang_code": "fr", "pos": "name", "pos_title": "Prénom 2",
+             "senses": [{"glosses": ["Prénom féminin."]}]},
+            {"word": "Toulouse", "lang_code": "fr", "pos": "name", "pos_title": "Nom propre",
+             "senses": [{"glosses": ["Ville de France."]}]},
+            {"word": "dog", "lang_code": "en", "pos": "noun", "senses": [{"glosses": ["Chien."]}]},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            src = os.path.join(tmp, "fr.jsonl")
+            with open(src, "w", encoding="utf-8") as f:
+                f.writelines(json.dumps(e, ensure_ascii=False) + "\n" for e in sample)
+            out = os.path.join(tmp, "fr.db")
+            self.assertEqual(build(src, out, "fr"), {"words": 2, "senses": 2, "skipped": 3})
+            db = sqlite3.connect(out)
+            self.assertEqual(
+                db.execute("SELECT word, ipa, etymology FROM words ORDER BY word").fetchall(),
+                [("accueil", "\\a.kœj\\", "Déverbal de accueillir.\nVoir aussi accueillir."), ("Toulouse", None, None)],
+            )
+            db.close()
+
 
 class FindLinksTest(unittest.TestCase):
     def test_whole_words_in_order_without_overlaps_or_namespaces(self):
