@@ -42,7 +42,7 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 ### Etapa 0: Decisões macro
 - [x] Fechar M7–M12.
 - [x] `git init`, licença MIT, README.
-- [ ] Repositório público no GitHub.
+- [x] Repositório público no GitHub: https://github.com/dada1smo/cypher
 
 ### Etapa 1: Pipeline de dados (Python)
 - [ ] Baixar o JSONL de palavras em inglês no kaikki.org.
