@@ -21,7 +21,7 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 export function DictionaryEntry({ word }: DictionaryEntryProps) {
   const entry = useWord(word);
   const router = useRouter();
-  const { open } = useOpenWord();
+  const { open, newSearch } = useOpenWord();
   const [selectedPos, setSelectedPos] = useState<string>();
   const group = entry?.groups.find((g) => g.pos === selectedPos) ?? entry?.groups[0];
   const hasTabs = (entry?.groups.length ?? 0) > 1;
@@ -29,14 +29,17 @@ export function DictionaryEntry({ word }: DictionaryEntryProps) {
   return (
     <View style={styles.screen}>
       <View style={styles.bar}>
-        <BackButton label="Search" onPress={router.back} />
-        {entry && (
-          <IconButton
-            symbol="square.and.arrow.up"
-            label="Share"
-            onPress={() => Share.share({ message: `${entry.word}: ${entry.groups[0].senses[0].gloss}` })}
-          />
-        )}
+        <BackButton onPress={router.back} />
+        <View style={styles.actions}>
+          <IconButton symbol="magnifyingglass" label="New search" onPress={newSearch} />
+          {entry && (
+            <IconButton
+              symbol="square.and.arrow.up"
+              label="Share"
+              onPress={() => Share.share({ message: `${entry.word}: ${entry.groups[0].senses[0].gloss}` })}
+            />
+          )}
+        </View>
       </View>
       {entry === null && (
         <Text style={[typography.bodySmall, styles.missing]}>“{word}” is not in the dictionary.</Text>
@@ -77,6 +80,7 @@ export function DictionaryEntry({ word }: DictionaryEntryProps) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  actions: { flexDirection: 'row' },
   bar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing[3] },
   content: { gap: 18, paddingHorizontal: spacing[5], paddingTop: spacing[2], paddingBottom: spacing[6] },
   header: { gap: spacing[1] },

@@ -17,7 +17,7 @@ export function DictionaryAbout() {
   const info = useInfo();
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <BackButton label="Back" onPress={router.back} style={styles.back} />
+      <BackButton onPress={router.back} style={styles.back} />
       <Text accessibilityRole="header" style={[typography.screenTitle, { color: colors.ink }]}>
         About Cypher
       </Text>

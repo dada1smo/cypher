@@ -6,7 +6,8 @@ import { DictionaryEntry } from './dictionary-entry';
 jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn() }) }));
 jest.mock('../hooks/use-word');
 jest.mock('../hooks/use-open-word');
-jest.mocked(useOpenWord).mockReturnValue({ open: jest.fn(), openRandom: jest.fn() });
+const newSearch = jest.fn();
+jest.mocked(useOpenWord).mockReturnValue({ open: jest.fn(), openRandom: jest.fn(), newSearch });
 const mockUseWord = jest.mocked(useWord);
 
 const sense = (n: number, gloss: string) => ({ n, gloss, example: null, links: [] });
@@ -46,4 +47,11 @@ test('a missing word says so', async () => {
   mockUseWord.mockReturnValue(null);
   await render(<DictionaryEntry word="zzzq" />);
   expect(screen.getByText('“zzzq” is not in the dictionary.')).toBeOnTheScreen();
+});
+
+test('the search button starts a new search', async () => {
+  mockUseWord.mockReturnValue({ word: 'sonder', ipa: null, etymology: null, groups: [{ pos: 'noun', senses: [sense(1, 'A realization.')] }] });
+  await render(<DictionaryEntry word="sonder" />);
+  await fireEvent.press(screen.getByRole('button', { name: 'New search' }));
+  expect(newSearch).toHaveBeenCalled();
 });

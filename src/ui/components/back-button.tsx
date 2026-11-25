@@ -4,14 +4,13 @@ import { colors } from '../theme/colors';
 import { spacing, touchTarget } from '../theme/spacing';
 import { typography } from '../theme/typography';
 
-export type BackButtonProps = { label: string; onPress: () => void; style?: StyleProp<ViewStyle> };
+export type BackButtonProps = { onPress: () => void; style?: StyleProp<ViewStyle> };
 
-/** "‹ Label", the way back to the previous screen. */
-export function BackButton({ label, onPress, style }: BackButtonProps) {
+/** "‹ Back", the way back to the previous screen (which may be another entry). */
+export function BackButton({ onPress, style }: BackButtonProps) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Back to ${label}`}
       onPress={onPress}
       hitSlop={spacing[2]}
       style={[styles.button, style]}
@@ -21,7 +20,7 @@ export function BackButton({ label, onPress, style }: BackButtonProps) {
         return (
           <>
             <SymbolView name="chevron.left" size={17} tintColor={color} />
-            <Text style={[typography.nav, { color }]}>{label}</Text>
+            <Text style={[typography.nav, { color }]}>Back</Text>
           </>
         );
       }}

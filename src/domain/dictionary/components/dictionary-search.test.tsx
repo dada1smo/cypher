@@ -8,7 +8,7 @@ jest.mock('../hooks/use-open-word');
 const mockUseSearch = jest.mocked(useSearch);
 const open = jest.fn();
 const openRandom = jest.fn();
-jest.mocked(useOpenWord).mockReturnValue({ open, openRandom });
+jest.mocked(useOpenWord).mockReturnValue({ open, openRandom, newSearch: jest.fn() });
 
 const field = () => screen.getByPlaceholderText('Search a word');
 

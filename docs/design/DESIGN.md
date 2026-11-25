@@ -167,7 +167,9 @@ Fluxo principal da v1: **Início → digitar → resultados → verbete**. Sem t
 - Return abre o primeiro resultado. Footer fica sob o teclado.
 
 ### 3 · Verbete
-- Barra: "‹ Search" à esquerda; compartilhar à direita (ícone, `accent`). Favoritar entra na Etapa 5.
+- Barra: "‹ Back" à esquerda (volta para a tela anterior, que pode ser outro verbete aberto por um link);
+  à direita, ícones `accent`: **busca** (lupa: vai direto ao Início com o campo vazio e focado, saindo de
+  qualquer pilha de verbetes, ex. `router.dismissTo('/')`) e compartilhar. Favoritar está fora por enquanto.
 - Rota por palavra (`word/[word]`), não por id: o verbete junta as classes da mesma grafia, e os
   links nas definições apontam para o texto da palavra.
 - Cabeçalho: palavra, pronúncia (IPA).
