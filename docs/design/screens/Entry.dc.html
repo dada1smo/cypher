@@ -32,10 +32,14 @@ a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
 <p style="margin: 0; font-size: 16px; color: {{ t.muted }}"><sc-if value="{{ single }}" hint-placeholder-val="{{ false }}"><span style="font-family: Fraunces, Georgia, serif; font-style: italic; color: {{ t.ink }}">{{ posLabel }}</span> · </sc-if>{{ ipa }}</p>
 </header>
 <sc-if value="{{ multi }}" hint-placeholder-val="{{ true }}">
-<div role="tablist" aria-label="Part of speech" style="display: flex; gap: 4px; padding: 4px; background: {{ t.surface }}; border-radius: 12px; overflow-x: auto; scrollbar-width: none">
+<div style="position: relative; background: {{ t.surface }}; border-radius: 12px; overflow: hidden">
+<div role="tablist" aria-label="Part of speech" ref="{{ tabsRef }}" onScroll="{{ onTabsScroll }}" style="display: flex; gap: 4px; padding: 4px; overflow-x: auto; scrollbar-width: none">
 <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="2">
 <button role="tab" aria-selected="{{ tab.selected }}" onClick="{{ tab.pick }}" style="{{ tab.style }}">{{ tab.label }}</button>
 </sc-for>
+</div>
+<sc-if value="{{ fadeLeft }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position: absolute; left: 0; top: 0; bottom: 0; width: 32px; pointer-events: none; background: linear-gradient(to right, {{ t.surface }} 15%, transparent)"></div></sc-if>
+<sc-if value="{{ fadeRight }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 32px; pointer-events: none; background: linear-gradient(to left, {{ t.surface }} 15%, transparent)"></div></sc-if>
 </div>
 </sc-if>
 <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 16px">
@@ -63,7 +67,16 @@ a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"word":{"editor":"enum","options":["cipher","serendipity","c"],"default":"cipher"},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-constructor(p) { super(p); this.state = { pos: 'noun', saved: false, etymOpen: false }; }
+constructor(p) { super(p); this.state = { pos: 'noun', saved: false, etymOpen: false, fadeLeft: false, fadeRight: false }; }
+componentDidMount() { this.measureTabs(); }
+componentDidUpdate(prev) { if (prev.word !== this.props.word) this.measureTabs(); }
+// fades show only on the side where more tabs are hidden
+measureTabs() {
+const el = this.tabsEl;
+if (!el) { if (this.state.fadeLeft || this.state.fadeRight) this.setState({ fadeLeft: false, fadeRight: false }); return; }
+const fadeLeft = el.scrollLeft > 2, fadeRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 2;
+if (fadeLeft !== this.state.fadeLeft || fadeRight !== this.state.fadeRight) this.setState({ fadeLeft, fadeRight });
+}
 renderVals() {
 const dark = this.props.dark ?? false;
 const t = dark
@@ -112,7 +125,8 @@ style: 'flex: 1 0 auto; white-space: nowrap; padding: 0 14px; min-height: 40px; 
 };
 });
 return {
-t, tabs, dark, word, ipa: entries[word].ipa, etym: entries[word].etym,
+t, tabs, dark,
+tabsRef: (el) => { this.tabsEl = el; }, onTabsScroll: () => this.measureTabs(), fadeLeft: this.state.fadeLeft, fadeRight: this.state.fadeRight, word, ipa: entries[word].ipa, etym: entries[word].etym,
 multi: keys.length > 1, single: keys.length === 1, posLabel: keys[0],
 // [word] in a gloss marks a link (kaikki: senses[].links)
 senses: data[pos].map((s, i) => ({ ...s, n: i + 1, parts: s.gloss.split(/(\[[^\]]+\])/).filter(Boolean).map((x) => { const link = x[0] === '['; return { text: link ? x.slice(1, -1) : x, link, plain: !link }; }) })),

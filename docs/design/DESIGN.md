@@ -108,6 +108,11 @@ sombra leve. Rótulo `Noun · 3` (classe + número de definições).
   (padding 14 nas laterais, uma linha só) e cresce para preencher a barra quando cabem todas
   (`flexGrow: 1, flexShrink: 0`). Quando não cabem (ex.: "c", 6 classes), a barra **rola na horizontal**
   (`ScrollView horizontal`, sem indicador); a última aba aparece cortada na borda, o que mostra que há mais.
+- **Esmaecido nas bordas**: um gradiente de 32 de largura, da cor `surface` (sólida nos primeiros 15%) para
+  transparente, sobre a borda onde ainda há abas escondidas. O da direita aparece quando há mais à direita,
+  o da esquerda depois de rolar; somem no início/fim. Sem toque (`pointerEvents="none"`), dentro do
+  contorno arredondado da barra. Calcule pelo `onScroll` + `onContentSizeChange`/`onLayout`. No app,
+  o gradiente pede `expo-linear-gradient` (ainda não instalado: `npx expo install expo-linear-gradient`).
   Ao selecionar uma aba, role para deixá-la inteira à vista. Referência: [`EntryMany.dc.html`](screens/EntryMany.dc.html).
 - Rótulos por extenso: `Numeral`, `Preposition`, `Adjective` (não as siglas do kaikki).
 
