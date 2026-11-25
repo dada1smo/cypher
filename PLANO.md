@@ -58,7 +58,7 @@ Atenção para a Etapa 3: a busca ignora maiúsculas, então `dog` também traz 
 - [x] Criar o projeto (Expo SDK 58, Expo Router, TypeScript) na raiz do repo, seguindo [docs/architecture](docs/architecture/overview.md).
 - [x] `src/layers.test.ts` verificando camadas e nomes ([app.md](docs/architecture/app.md#verificação)).
 - [x] Embutir o `.db` e abrir o banco no app (tela inicial mostra o número de palavras).
-  Conferido com testes e com `npx expo export --platform ios` (o bundle inclui o banco). **Ainda não rodou num aparelho.**
+  Conferido com testes e com `npx expo export --platform ios` (o bundle inclui o banco). Rodou no simulador (Etapa 3) e no iPhone (Etapa 4).
 - [x] Rodar no simulador iOS (`npm run ios`).
 
 ### Etapa 3: Busca e definição (MVP)
