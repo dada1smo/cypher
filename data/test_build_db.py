@@ -25,6 +25,9 @@ SAMPLE = [
     {"word": "Smiths", "lang_code": "en", "pos": "name", "senses": [{"glosses": ["plural of Smith"]}]},
     {"word": "Mary", "lang_code": "en", "pos": "name",
      "senses": [{"glosses": ["A female given name."]}, {"glosses": ["The mother of Jesus."]}]},
+    {"word": "Al", "lang_code": "en", "pos": "name",
+     "senses": [{"glosses": ["A diminutive of the male given names Alan and Albert."]}]},
+    {"word": "Als", "lang_code": "en", "pos": "name", "senses": [{"glosses": ["plural of Al"]}]},
     {"word": "Koreas", "lang_code": "en", "pos": "name", "senses": [{"glosses": ["plural of Korea"]}]},
     {"word": "surname", "lang_code": "en", "pos": "noun", "senses": [{"glosses": ["A family name."]}]},
 ]
@@ -45,7 +48,7 @@ class BuildDbTest(unittest.TestCase):
         self.dir.cleanup()
 
     def test_counts_and_filtering(self):
-        self.assertEqual(self.stats, {"words": 5, "senses": 6, "skipped": 3})
+        self.assertEqual(self.stats, {"words": 5, "senses": 6, "skipped": 4})
 
     def test_personal_names_removed(self):
         rows = self.db.execute(
@@ -54,6 +57,15 @@ class BuildDbTest(unittest.TestCase):
         self.assertEqual(rows, [
             ("Koreas", "plural of Korea"), ("Mary", "The mother of Jesus."), ("surname", "A family name."),
         ])
+
+    def test_failed_build_leaves_no_database(self):
+        broken = os.path.join(self.dir.name, "broken.jsonl")
+        with open(broken, "w", encoding="utf-8") as f:
+            f.write(json.dumps(SAMPLE[0]) + '\n{"word": "cut off')
+        out = os.path.join(self.dir.name, "broken.db")
+        with self.assertRaises(json.JSONDecodeError):
+            build(broken, out)
+        self.assertFalse(os.path.exists(out))
 
     def test_entry_fields(self):
         row = self.db.execute("SELECT pos, ipa, etymology FROM words WHERE word = 'dog'").fetchone()

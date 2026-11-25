@@ -50,7 +50,7 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 - [x] Testes com amostra: `python3 -m unittest discover data`.
 - [x] Medir o tamanho e o tempo da busca.
 
-Resultado (dump de 30/10/2026): 1.408.231 palavras, 1.691.110 definições, 317,5 MB.
+Resultado (dump de 30/10/2026): 1.408.015 palavras, 1.690.837 definições, 317,4 MB.
 Busca por prefixo e abertura de verbete: ~0,1 ms. Gerar do zero leva ~30 min (quase tudo é download).
 Atenção para a Etapa 3: a busca ignora maiúsculas, então `dog` também traz `DOG` (sigla); mostrar a grafia exata primeiro.
 

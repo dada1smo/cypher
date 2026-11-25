@@ -3,9 +3,10 @@
 Usage:
   python3 data/build_db.py <input.jsonl|input.jsonl.gz|-> <output.db>
 
-"-" reads from stdin, so the dump can be streamed without saving it:
-  curl -s https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl.gz \
-    | gunzip | python3 data/build_db.py - cypher-en.db
+"-" reads from stdin, so the dump can be streamed without saving it.
+pipefail makes a dropped download fail the command instead of building a short database:
+  set -o pipefail; curl -sSf https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl.gz \
+    | gunzip | python3 data/build_db.py - data/cypher-en.db
 """
 
 import gzip
@@ -33,7 +34,7 @@ CREATE TABLE senses (
 
 # Personal names are most of the "name" entries and useless in a dictionary.
 # Places, brands, etc. stay. Only applied to pos "name", so "last name" (noun) stays.
-PERSONAL_NAME = re.compile(r"\b(surname|given name)\b")
+PERSONAL_NAME = re.compile(r"\b(surname|given name)s?\b")
 
 # Created after the bulk insert: much faster than maintaining them row by row.
 INDEXES = """
@@ -51,10 +52,11 @@ def open_input(path):
 
 
 def parse_entry(entry, lang_code="en"):
-    """Return (word, pos, ipa, etymology, [(gloss, example)]) or None to skip."""
+    """Return ((word, pos, ipa, etymology, [(gloss, example)]) or None to skip, had_personal_name)."""
     if entry.get("lang_code") != lang_code or not entry.get("word"):
-        return None
+        return None, False
     senses = []
+    had_personal_name = False
     for s in entry.get("senses", []):
         glosses = s.get("glosses")
         if not glosses:
@@ -63,20 +65,23 @@ def parse_entry(entry, lang_code="en"):
         # Upgrade if the result screen needs to show the sense hierarchy.
         gloss = glosses[-1]
         if entry.get("pos") == "name" and PERSONAL_NAME.search(gloss):
+            had_personal_name = True
             continue
         examples = s.get("examples") or []
         example = examples[0].get("text") if examples else None
         senses.append((gloss, example))
     if not senses:
-        return None
+        return None, had_personal_name
     ipa = next((x["ipa"] for x in entry.get("sounds", []) if x.get("ipa")), None)
-    return entry["word"], entry.get("pos"), ipa, entry.get("etymology_text"), senses
+    return (entry["word"], entry.get("pos"), ipa, entry.get("etymology_text"), senses), had_personal_name
 
 
 def build(input_path, output_path, lang_code="en"):
-    if os.path.exists(output_path):
-        os.remove(output_path)
-    db = sqlite3.connect(output_path)
+    # Build into a temp file and rename at the end, so a failed run never leaves a half database.
+    tmp_path = output_path + ".tmp"
+    if os.path.exists(tmp_path):
+        os.remove(tmp_path)
+    db = sqlite3.connect(tmp_path)
     db.executescript("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;" + SCHEMA)
 
     words = skipped = 0
@@ -85,11 +90,9 @@ def build(input_path, output_path, lang_code="en"):
     with open_input(input_path) as f:
         for line in f:
             entry = json.loads(line)
-            if entry.get("pos") == "name" and any(
-                PERSONAL_NAME.search(g) for s in entry.get("senses", []) for g in s.get("glosses", [])[-1:]
-            ):
-                db.execute("INSERT OR IGNORE INTO personal_names VALUES (?)", (entry.get("word"),))
-            parsed = parse_entry(entry, lang_code)
+            parsed, had_personal_name = parse_entry(entry, lang_code)
+            if had_personal_name:
+                db.execute("INSERT OR IGNORE INTO personal_names VALUES (?)", (entry["word"],))
             if parsed is None:
                 skipped += 1
                 continue
@@ -111,6 +114,7 @@ def build(input_path, output_path, lang_code="en"):
     db.execute("VACUUM")
     words, senses = db.execute("SELECT (SELECT count(*) FROM words), (SELECT count(*) FROM senses)").fetchone()
     db.close()
+    os.replace(tmp_path, output_path)
     return {"words": words, "senses": senses, "skipped": skipped}
 
 
