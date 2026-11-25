@@ -8,7 +8,7 @@ import { splitGloss } from '../utils/split-gloss';
 
 export type DictionarySenseItemProps = { sense: Sense; onOpenWord: (word: string) => void };
 
-/** A numbered definition with its linked words (dotted underline) and an example in italics. */
+/** A numbered definition with its linked words (accent color, no underline) and an example in italics. */
 export function DictionarySenseItem({ sense, onOpenWord }: DictionarySenseItemProps) {
   const [pressed, setPressed] = useState<number | null>(null);
   return (
@@ -54,8 +54,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   body: { flex: 1, gap: 6 },
-  // React Native has no underline offset: iOS takes it from the font, so the embedded Fraunces.ttf has its
-  // underlinePosition raised (README). shortcut: thickness stays the system's, not the design's 1.5.
-  link: { textDecorationLine: 'underline', textDecorationStyle: 'dotted', textDecorationColor: colors.link },
+  link: { color: colors.accent },
   linkPressed: { backgroundColor: colors.accentSoft },
 });

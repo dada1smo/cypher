@@ -11,5 +11,4 @@ export const colors = {
   accentPressed: '#92400E',
   accentBorder: '#D97706',
   accentSoft: '#FEF3C7',
-  link: 'rgba(180,83,9,0.55)',
 } as const;

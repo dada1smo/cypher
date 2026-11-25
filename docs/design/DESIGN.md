@@ -32,11 +32,10 @@ sobre fundo claro, por isso cada uso tem seu tom.
 | `line` | `#E4E4E7` | `#2A2E36` | Divisórias, borda do footer |
 | `card` | `#FFFFFF` | — | Campo de busca, cartões, aba selecionada (claro) |
 | `tabOn` | `#FFFFFF` | `#2C3140` | Aba selecionada |
-| `accent` | `#B45309` (amber-700) | `#FBBF24` (amber-400) | Links, ícones, botões de texto |
+| `accent` | `#B45309` (amber-700) | `#FBBF24` (amber-400) | Links (inclusive nas definições), ícones, botões de texto |
 | `accentPressed` | `#92400E` (amber-800) | — | Estado pressionado/hover |
 | `accentBorder` | `#D97706` (amber-600) | — | Borda do campo de busca focado |
 | `accentSoft` | `#FEF3C7` (amber-100) | — | Fundo de "Random word", chips de sugestão, toque em link |
-| `link` | `rgba(180,83,9,0.55)` | `rgba(251,191,36,0.6)` | Sublinhado dos links nas definições |
 | `keyboard` | `#D1D3D9` | — | Só no mock: placeholder do teclado |
 
 **Modo escuro: Etapa 5**, não v1. Vai seguir o sistema (`useColorScheme`). A coluna Escuro já fica
@@ -110,10 +109,10 @@ sombra leve. Rótulo `Noun · 3` (classe + número de definições).
 
 Palavras com link dentro de uma definição abrem o verbete dessa palavra.
 
-- Texto na cor normal (`ink`), para não atrapalhar a leitura.
-- Sublinhado **pontilhado**, espessura 1.5, afastado 4 do texto, cor `link`. No app: o React Native não
-  controla espessura nem afastamento do sublinhado; o afastamento vem da fonte, então o `Fraunces.ttf`
-  embutido foi alterado (`underlinePosition` -300 → -180, cerca de 2 do texto). A espessura fica a do sistema.
+- **Só cor**: a palavra fica em `accent` (amber-700 no claro, amber-400 no escuro), **sem sublinhado**,
+  mesmo peso e fonte da definição. É o padrão do iOS para referências dentro de um texto; basta
+  `color` + `onPress` num `<Text>` aninhado.
+- Sem sublinhado, o `Fraunces.ttf` não precisa mais da edição em `underlinePosition`: volte ao arquivo original da fonte.
 - Ao tocar: fundo `accentSoft` rápido como confirmação, depois navega.
 - Ideia para depois: toque longo mostra uma prévia da primeira definição.
 - **Nem toda palavra vira link**: só as que o Wiktionary liga a outra página

@@ -43,7 +43,7 @@ a{color:#B45309;text-decoration:none}a:hover{color:#92400E}
 <li style="display: flex; gap: 12px">
 <span style="flex-shrink: 0; width: 22px; height: 22px; border-radius: 11px; background: {{ t.surface }}; color: {{ t.muted }}; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; margin-top: 2px">{{ s.n }}</span>
 <div style="display: flex; flex-direction: column; gap: 6px">
-<p style="margin: 0; font-family: Fraunces, Georgia, serif; font-size: 18px; line-height: 1.45"><sc-for list="{{ s.parts }}" as="part" hint-placeholder-count="1"><sc-if value="{{ part.link }}" hint-placeholder-val="{{ false }}"><a href="EntryNoun.dc.html" style="color: inherit; text-decoration-line: underline; text-decoration-style: dotted; text-decoration-thickness: 1.5px; text-underline-offset: 4px; text-decoration-color: {{ t.link }}">{{ part.text }}</a></sc-if><sc-if value="{{ part.plain }}" hint-placeholder-val="{{ true }}"><span>{{ part.text }}</span></sc-if></sc-for></p>
+<p style="margin: 0; font-family: Fraunces, Georgia, serif; font-size: 18px; line-height: 1.45"><sc-for list="{{ s.parts }}" as="part" hint-placeholder-count="1"><sc-if value="{{ part.link }}" hint-placeholder-val="{{ false }}"><a href="EntryNoun.dc.html" style="color: {{ t.accent }}; text-decoration: none">{{ part.text }}</a></sc-if><sc-if value="{{ part.plain }}" hint-placeholder-val="{{ true }}"><span>{{ part.text }}</span></sc-if></sc-for></p>
 <sc-if value="{{ s.example }}" hint-placeholder-val="{{ true }}">
 <p style="margin: 0; font-size: 15px; line-height: 1.45; font-style: italic; color: {{ t.muted }}">“{{ s.example }}”</p>
 </sc-if>
@@ -67,8 +67,8 @@ constructor(p) { super(p); this.state = { pos: 'noun', saved: false, etymOpen: f
 renderVals() {
 const dark = this.props.dark ?? false;
 const t = dark
-? { bg: '#111317', ink: '#ECEDEF', muted: '#A3A7B0', surface: '#1E2128', line: '#2A2E36', accent: '#FBBF24', tabOn: '#2C3140', link: 'rgba(251,191,36,0.6)' }
-: { bg: '#FAFAF9', ink: '#16181D', muted: '#5B606B', surface: '#EFEFF1', line: '#E4E4E7', accent: '#B45309', tabOn: '#FFFFFF', link: 'rgba(180,83,9,0.55)' };
+? { bg: '#111317', ink: '#ECEDEF', muted: '#A3A7B0', surface: '#1E2128', line: '#2A2E36', accent: '#FBBF24', tabOn: '#2C3140' }
+: { bg: '#FAFAF9', ink: '#16181D', muted: '#5B606B', surface: '#EFEFF1', line: '#E4E4E7', accent: '#B45309', tabOn: '#FFFFFF' };
 const entries = {
 cipher: { ipa: '/ˈsaɪfə/ UK · /ˈsaɪfɚ/ US', etym: 'From Middle English siphre, from Old French cifre, from Medieval Latin cifra, from Arabic ṣifr (“zero, empty”).', pos: {
 noun: [
