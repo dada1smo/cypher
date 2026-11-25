@@ -11,7 +11,7 @@ export function SoftButton({ label, symbol, onPress, style }: SoftButtonProps) {
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={[styles.button, style]}>
       {({ pressed }) => {
-        const color = pressed ? colors.accentPressed : colors.ink;
+        const color = pressed ? colors.accentPressed : colors.accent;
         return (
           <>
             <SymbolView name={symbol} size={18} tintColor={color} />
