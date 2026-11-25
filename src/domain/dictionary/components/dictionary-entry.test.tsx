@@ -55,3 +55,9 @@ test('the search button starts a new search', async () => {
   await fireEvent.press(screen.getByRole('button', { name: 'New search' }));
   expect(newSearch).toHaveBeenCalled();
 });
+
+test('the entry says which dictionary it is from', async () => {
+  mockUseWord.mockReturnValue({ word: 'sonder', ipa: null, etymology: null, groups: [{ pos: 'noun', senses: [sense(1, 'A realization.')] }] });
+  await render(<DictionaryEntry word="sonder" />);
+  expect(screen.getByLabelText('Dictionary: English')).toBeOnTheScreen();
+});

@@ -6,7 +6,7 @@ Adaptado da arquitetura do app do bloco-ds. Sem essa fronteira, as telas acumula
 
 | Camada | Responsabilidade | Exemplo |
 |---|---|---|
-| `app` | Rotas do Expo Router: telas, hierarquia e layouts (`_layout.tsx`). O arquivo só lê params, redireciona e compõe peças de `domain` e `ui`. Nenhum componente, hook, query ou regra é declarado nele. | `app/word/[word].tsx` |
+| `app` | Rotas do Expo Router: telas, hierarquia e layouts (`_layout.tsx`). O arquivo só lê params, redireciona e compõe peças de `domain` e `ui`. Nenhum componente, hook, query ou regra é declarado nele. | `app/word/[lang]/[word].tsx` |
 | `domain` | Regras do dicionário, uma pasta por domínio: componentes, hooks, types, utils e as queries daquele domínio. | `domain/dictionary/` |
 | `ui` | Componentes "burros" e reutilizáveis, sem termo do dicionário, mais o tema do app (`ui/theme/`). | `ui/components/search-field.tsx` |
 | `global` | O que é do app inteiro: abertura do banco, providers. A pasta só é criada no primeiro uso. | `global/db/` |
@@ -32,7 +32,7 @@ Import entre camadas usa o alias `@/<camada>/…` (`@/*` → `src/*` no `tsconfi
 
 ## Banco de dados
 
-- `global/db/db-provider.tsx` (`DbProvider`) abre o `.db` embutido. Não conhece tabela nenhuma. Os hooks de `domain` pegam a conexão com `useSQLiteContext()` do `expo-sqlite`, sem wrapper próprio.
+- `global/db/db-provider.tsx` (`DbProvider`) abre um banco pelo nome, só para leitura. Não conhece tabela nem idioma: quem escolhe o banco é o `DictionaryDb` de `domain/languages`, que cada rota põe em volta do seu conteúdo. Os hooks de `domain` pegam a conexão com `useSQLiteContext()` do `expo-sqlite`, sem wrapper próprio.
 - SQL só em `domain/<nome>/data/`, uma função por consulta (`searchWords(prefix)`, `getWord(word)`), sempre com parâmetros (`?`), nunca string concatenada.
 - Componentes não chamam o banco: usam um hook do domínio (`useSearch`, `useWord`), que chama a função de `data/`.
 - Os types do domínio descrevem o que a tela usa, não a linha do SQLite. A conversão fica na função de `data/`.
@@ -70,7 +70,7 @@ Estrutura da v1 (Etapa 3):
 
 ```
 src/
-  app/_layout.tsx, index.tsx (busca), word/[word].tsx (verbete), about.tsx (sobre)
+  app/_layout.tsx, index.tsx (busca), word/[lang]/[word].tsx (verbete), about.tsx (sobre), languages.tsx (idiomas)
   domain/dictionary/
     data/       search-words, get-word, random-word, get-info
     hooks/      use-search, use-word, use-info, use-open-word (navegação para um verbete)
@@ -78,9 +78,16 @@ src/
     types/      word
     components/ dictionary-search, dictionary-result-list, dictionary-result-item, dictionary-no-results,
                 dictionary-entry, dictionary-sense-item, dictionary-etymology, dictionary-about, dictionary-footer
+  domain/languages/
+    data/       languages (lista de idiomas e bancos), settings (kv-store), dictionary-files (download, apagar)
+    hooks/      use-languages, use-dictionary-language, languages-context
+    utils/      format, language-detail
+    types/      language
+    components/ languages-provider (estado e downloads, acima de todas as telas), dictionary-db (abre o banco de um idioma),
+                language-menu (pílula + menu nativo, @expo/ui), language-tag, language-settings, language-row
   ui/
     components/ screen (safe area + footer fixo), search-field, back-button, icon-button,
-                segmented-control, soft-button, info-table, link-row
+                segmented-control, edge-fade, soft-button, info-table, link-row, progress-bar
     theme/      colors, typography, spacing
   global/db/db-provider.tsx, test-db.ts
 ```

@@ -1,11 +1,11 @@
 import { Stack } from 'expo-router';
-import { DbProvider } from '@/global/db/db-provider';
+import { LanguagesProvider } from '@/domain/languages/components/languages-provider';
 import { colors } from '@/ui/theme/colors';
 
 export default function RootLayout() {
   return (
-    <DbProvider>
+    <LanguagesProvider>
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
-    </DbProvider>
+    </LanguagesProvider>
   );
 }

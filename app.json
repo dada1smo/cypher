@@ -9,7 +9,7 @@
     ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "io.github.dada1smo.cypher",

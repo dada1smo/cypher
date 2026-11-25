@@ -3,6 +3,7 @@ import { useOpenWord } from '../hooks/use-open-word';
 import { useSearch } from '../hooks/use-search';
 import { DictionarySearch } from './dictionary-search';
 
+jest.mock('@/domain/languages/components/language-menu', () => ({ LanguageMenu: () => null }));
 jest.mock('../hooks/use-search');
 jest.mock('../hooks/use-open-word');
 const mockUseSearch = jest.mocked(useSearch);
@@ -10,7 +11,7 @@ const open = jest.fn();
 const openRandom = jest.fn();
 jest.mocked(useOpenWord).mockReturnValue({ open, openRandom, newSearch: jest.fn() });
 
-const field = () => screen.getByPlaceholderText('Search a word');
+const field = () => screen.getByPlaceholderText('Search an English word');
 
 test('empty: shows the title and Random word', async () => {
   mockUseSearch.mockReturnValue(null);
@@ -41,3 +42,4 @@ test('no match: shows the empty state, and X goes back to the start', async () =
   await fireEvent.press(screen.getByRole('button', { name: 'Clear search' }));
   expect(screen.getByRole('header', { name: 'Cypher' })).toBeOnTheScreen();
 });
+

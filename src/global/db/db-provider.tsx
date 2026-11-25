@@ -1,18 +1,20 @@
-import { SQLiteProvider } from 'expo-sqlite';
+import { SQLiteProvider, type SQLiteProviderAssetSource } from 'expo-sqlite';
 import type { ReactNode } from 'react';
 
-// The provider copies the bundled asset to the app's documents only once per name,
-// so bump this when assets/cypher-en.db is rebuilt.
-// shortcut: old copies stay on disk (~320 MB each); delete them when data updates become frequent.
-const DB_NAME = 'cypher-en-2026-11-25.db';
+export type DbProviderProps = {
+  /** File name in expo-sqlite's default directory (Documents/SQLite). */
+  databaseName: string;
+  /** For a database bundled with the app: copied to `databaseName` on first open (once per name). */
+  assetSource?: SQLiteProviderAssetSource;
+  children: ReactNode;
+};
 
-export type DbProviderProps = { children: ReactNode };
-
-export function DbProvider({ children }: DbProviderProps) {
+/** Opens a dictionary database, read-only, for `useSQLiteContext()` below it. Knows no tables. */
+export function DbProvider({ databaseName, assetSource, children }: DbProviderProps) {
   return (
     <SQLiteProvider
-      databaseName={DB_NAME}
-      assetSource={{ assetId: require('../../../assets/cypher-en.db') }}
+      databaseName={databaseName}
+      assetSource={assetSource}
       onInit={(db) => db.execAsync('PRAGMA query_only = ON')}
     >
       {children}

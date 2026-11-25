@@ -1,5 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { LanguageTag } from '@/domain/languages/components/language-tag';
+import { useDictionaryLanguage } from '@/domain/languages/hooks/use-dictionary-language';
 import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { BackButton } from '@/ui/components/back-button';
 import { IconButton } from '@/ui/components/icon-button';
@@ -22,6 +24,7 @@ export function DictionaryEntry({ word }: DictionaryEntryProps) {
   const entry = useWord(word);
   const router = useRouter();
   const { open, newSearch } = useOpenWord();
+  const lang = useDictionaryLanguage();
   const [selectedPos, setSelectedPos] = useState<string>();
   const group = entry?.groups.find((g) => g.pos === selectedPos) ?? entry?.groups[0];
   const hasTabs = (entry?.groups.length ?? 0) > 1;
@@ -47,6 +50,7 @@ export function DictionaryEntry({ word }: DictionaryEntryProps) {
       {entry && group && (
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.header}>
+            <LanguageTag code={lang} />
             <Text accessibilityRole="header" style={[typography.entryWord, { color: colors.ink }]}>
               {entry.word}
             </Text>

@@ -11,7 +11,7 @@ import { useInfo } from '../hooks/use-info';
 
 const SOURCE_URL = 'https://github.com/dada1smo/cypher';
 
-/** About and credits: database facts, Wiktionary / kaikki attribution (CC BY-SA 4.0) and the code license. */
+/** About and credits: facts about the dictionary in use, a way to the Languages screen, Wiktionary / kaikki attribution (CC BY-SA 4.0) and the code license. */
 export function DictionaryAbout() {
   const router = useRouter();
   const info = useInfo();
@@ -22,7 +22,7 @@ export function DictionaryAbout() {
         About Cypher
       </Text>
       <Text style={[typography.lead, { color: colors.ink }]}>
-        An offline English dictionary. Every word lives on your phone: no account, no network, no tracking.
+        An offline dictionary. Every word lives on your phone: no account, no network, no tracking.
       </Text>
       <InfoTable
         rows={[
@@ -40,7 +40,10 @@ export function DictionaryAbout() {
         </Text>
         <Text style={[typography.bodySmall, { color: colors.ink }]}>App code is open source under the MIT license.</Text>
       </View>
-      <LinkRow label="Source code on GitHub" onPress={() => Linking.openURL(SOURCE_URL)} />
+      <View style={styles.links}>
+        <LinkRow label="Languages" onPress={() => router.push('/languages')} />
+        <LinkRow label="Source code on GitHub" onPress={() => Linking.openURL(SOURCE_URL)} />
+      </View>
     </ScrollView>
   );
 }
@@ -49,4 +52,5 @@ const styles = StyleSheet.create({
   content: { gap: spacing[5], paddingHorizontal: spacing[5], paddingBottom: spacing[5] },
   back: { marginLeft: -spacing[1] },
   credits: { gap: spacing[2] },
+  links: { gap: spacing[3] },
 });

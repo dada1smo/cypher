@@ -5,6 +5,9 @@ import { SoftButton } from '@/ui/components/soft-button';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { typography } from '@/ui/theme/typography';
+import { LanguageMenu } from '@/domain/languages/components/language-menu';
+import { languageOf } from '@/domain/languages/data/languages';
+import { useDictionaryLanguage } from '@/domain/languages/hooks/use-dictionary-language';
 import { useOpenWord } from '../hooks/use-open-word';
 import { useSearch } from '../hooks/use-search';
 import { DictionaryNoResults } from './dictionary-no-results';
@@ -17,17 +20,22 @@ export function DictionarySearch() {
   const found = useSearch(prefix);
   const { open, openRandom } = useOpenWord();
   const first = found?.prefix === prefix ? found.results[0] : undefined;
+  const lang = languageOf(useDictionaryLanguage());
+  const placeholder = lang ? `Search ${/^[AEIOU]/.test(lang.english) ? 'an' : 'a'} ${lang.english} word` : 'Search a word';
 
   return (
     <View style={styles.screen}>
       {!prefix && (
-        <Text accessibilityRole="header" style={[typography.screenTitle, styles.title]}>
-          Cypher
-        </Text>
+        <View style={styles.titleRow}>
+          <Text accessibilityRole="header" style={[typography.screenTitle, { color: colors.ink }]}>
+            Cypher
+          </Text>
+          <LanguageMenu />
+        </View>
       )}
       <SearchField
         value={query}
-        placeholder="Search a word"
+        placeholder={placeholder}
         onChangeText={setQuery}
         onSubmit={() => first && open(first.word)}
         onClear={() => setQuery('')}
@@ -47,7 +55,14 @@ export function DictionarySearch() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, paddingTop: spacing[3] },
-  title: { color: colors.ink, paddingHorizontal: spacing[5], paddingTop: spacing[6], paddingBottom: spacing[7] },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing[5],
+    paddingTop: spacing[6],
+    paddingBottom: spacing[7],
+  },
   field: { marginHorizontal: spacing[5], marginBottom: spacing[3] },
   empty: { flex: 1 },
   random: { marginHorizontal: spacing[5], marginTop: 'auto', marginBottom: spacing[5] },

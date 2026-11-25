@@ -11,11 +11,12 @@ O único contrato entre os dois é o esquema do banco (m2): `words(id, word, pos
 
 O projeto Expo fica na raiz do repo (`package.json`, `app.json`, `metro.config.js`); `src/` é só o código do app.
 
-O app é offline (M5): nada de rede para consultar. O `.db` vai embutido (M8) e é aberto só para leitura:
+O app é offline (M5): nada de rede para consultar. Um banco por idioma (m9), aberto só para leitura. O inglês vai embutido (M8); os outros são baixados uma vez do GitHub Releases ao ligar o idioma, a única vez que o app usa a rede:
 
 - `data/build_db.py` lê o dump salvo em `data/raw/kaikki-en.jsonl.gz` e grava em `assets/cypher-en.db`. Os dois ficam fora do git: baixe o dump e gere o banco antes de rodar o app (comandos no topo do script).
-- `metro.config.js` registra `.db` como asset, e `global/db/db-provider.tsx` passa o arquivo ao `SQLiteProvider` do `expo-sqlite`.
-- Na primeira abertura o `expo-sqlite` copia o banco para os documentos do app (~2× o tamanho no aparelho). A cópia só acontece uma vez por nome, então `DB_NAME` no provider muda junto com cada banco novo (o nome leva a data do build).
+- `metro.config.js` registra `.db` como asset. `domain/languages/data/languages.ts` lista os idiomas com o nome de cada banco (e, para os baixados, URL e tamanho exato), e `DictionaryDb` abre o banco certo pelo `DbProvider` de `global/db`.
+- Na primeira abertura o `expo-sqlite` copia o banco embutido para `Documents/SQLite` (~2× o tamanho no aparelho). Os baixados vão direto para essa pasta, sem cópia. A cópia só acontece uma vez por nome, então o nome do banco leva a data do build e muda a cada banco novo.
+- `data/build_db.py <dump> <saída> fr` gera o francês, publicado como release `data-fr-AAAA-MM-DD`.
 - A conexão roda `PRAGMA query_only = ON`: qualquer escrita falha.
 
 Documentos:

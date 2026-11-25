@@ -19,7 +19,7 @@ Legenda: ✅ decidido · ❓ em aberto (com recomendação) · ⏳ depois
 | M6 | Custo | ✅ | Zero sempre que possível. Nenhum serviço pago na v1. |
 | M7 | Expo ou RN "puro" | ✅ | **Expo** (com *development build*, compilando localmente pelo Xcode). Menos configuração nativa, `expo-sqlite` pronto, e ainda dá para sair do Expo depois. |
 | M8 | Como o banco chega ao app | ✅ | **`.db` embutido no app** na v1. Funciona offline desde o primeiro uso. |
-| M9 | Instalação no iPhone | ✅ | Começar com o **Apple ID gratuito** (o app expira em 7 dias e precisa ser reinstalado pelo Xcode). Reavaliar a conta de desenvolvedor (US$ 99/ano) depois. |
+| M9 | Instalação no iPhone | ✅ | **Apple ID gratuito** com **AltStore**: o app continua expirando a cada 7 dias, mas o AltServer no Mac renova a assinatura sozinho quando o iPhone está na mesma rede Wi-Fi (Mac e iPhone quase sempre ligados e na mesma rede). Se passar 7 dias sem renovar, o app não abre até renovar, e os dados ficam. Limite da conta gratuita: 3 apps assinados, o AltStore incluído. Alternativas: SideStore (renova pelo próprio iPhone, sem Mac, com setup mais trabalhoso) e a conta de desenvolvedor (US$ 99/ano, build ad hoc que vale ~1 ano). |
 | M10 | Linguagem | ✅ | **TypeScript** no app e **Python** no script que gera o banco. |
 | M11 | Licença do código | ✅ | **MIT** para o código. Os dados são CC BY-SA 4.0: crédito ao Wiktionary no app, e o banco, se distribuído, mantém a mesma licença. |
 | M12 | Repositório | ✅ | **GitHub público desde o início.** O `.db` gerado não vai para o git (é grande e pode ser recriado pelo script). |
@@ -82,6 +82,7 @@ Pendências da Etapa 3, resolvidas:
 ### Etapa 4: Rodar no iPhone
 - [x] Assinar com a conta escolhida em M9 e instalar no aparelho. Apple ID gratuito, equipe em `ios.appleTeamId` (`app.json`), build em Release pelo `xcodebuild` com `-allowProvisioningUpdates` (o `expo run:ios` não deixa o Xcode criar o perfil). Passo a passo no README. Reinstalar a cada 7 dias.
 - [x] Ícone do app (`assets/icon.png`, gerado por `docs/design/make_icon.py`; DESIGN §5).
+- [ ] Instalar pelo AltStore (M9): AltServer no Mac, AltStore no iPhone, `.ipa` do build Release (`Payload/Cypher.app` compactado em zip) aberto pelo AltStore. Atualizar o passo a passo do README.
 - [ ] Usar no dia a dia e anotar o que falta.
 
 ### Etapa 5: Idiomas e polimento ⏳
@@ -91,12 +92,12 @@ Pendências da Etapa 3, resolvidas:
 - [x] Gerar `cypher-fr.db`: `python3 data/build_db.py data/raw/kaikki-fr.jsonl.gz data/out/cypher-fr.db fr` (~40 s). Dump de 25/11/2026: 2.083.570 verbetes, 2.628.098 definições, 484 MB. Busca por "a" (167 mil palavras): 111 ms no Mac.
   Mantidas as formas flexionadas (1,9 milhão das definições, sobretudo conjugações): buscar "suis" leva a "être". Sem elas o banco teria 191 MB.
 - [x] Publicar `cypher-fr.db` no GitHub Releases (m11): release [`data-fr-2026-11-25`](https://github.com/dada1smo/cypher/releases/tag/data-fr-2026-11-25), 483.975.168 bytes, SHA-256 `3943a9c7…42a6ffb`. Um banco novo vira uma release nova (`data-fr-AAAA-MM-DD`).
-- [ ] Seletor de idioma no Início: pílula no cabeçalho com menu dos idiomas habilitados; a busca e o "Random word" usam o idioma escolhido. O verbete não troca de idioma.
-- [ ] Tela "Languages": ligar/desligar dicionários, baixar com progresso e cancelar, apagar ao desligar, pelo menos um sempre ligado. Português como "Coming soon".
-- [ ] Guardar os idiomas habilitados e o último usado (armazenamento gravável, separado dos bancos, que abrem só para leitura).
-- [ ] Rota do verbete com o idioma (ex. `word/[lang]/[word]`), para links e compartilhamento apontarem para o dicionário certo.
+- [x] Seletor de idioma no Início: pílula no cabeçalho (sempre visível, como no protótipo) com o menu nativo do iOS (`@expo/ui`); a busca e o "Random word" usam o idioma escolhido. O verbete não troca de idioma e mostra a tag do dicionário.
+- [x] Tela "Languages" (pelo menu e pela tela Sobre): ligar/desligar dicionários, baixar com progresso e cancelar (`expo-file-system`, conferindo o tamanho exato), apagar ao desligar, pelo menos um sempre ligado. Português como "Coming soon". O download no simulador levou ~2 min.
+- [x] Guardar os idiomas habilitados e o último usado (`expo-sqlite/kv-store`, separado dos bancos, que abrem só para leitura).
+- [x] Rota do verbete com o idioma (`word/[lang]/[word]`): os links abrem o mesmo dicionário.
 
-**5b. Modo escuro (junto com 5a):** segue o sistema (`useColorScheme`). Bloqueado: faltam no DESIGN os valores escuros de `card`, `accentPressed`, `accentBorder`, `accentSoft` e da pílula de idioma (a cargo do agente de design).
+**5b. Modo escuro (junto com 5a):** ✅ segue o sistema (`userInterfaceStyle: automatic`). Os tokens viram cores dinâmicas do iOS (`DynamicColorIOS`); o gradiente das abas e a pílula SwiftUI escolhem o valor pelo `useColorScheme`.
 
 **5c. Polimento:**
 - Histórico (lista "Recent" no Início), favoritos, busca tolerante a erros. Histórico e favoritos gravam dados: precisam de um armazenamento separado do banco do dicionário, que abre só para leitura.
@@ -122,3 +123,5 @@ Pendências da Etapa 3, resolvidas:
 | 2026-11-25 | Idiomas entram na Etapa 5, antes do polimento: inglês e francês, português depois. Troca de idioma só no Início, tela para escolher os idiomas habilitados. m9–m11 em aberto (um banco por idioma, baixado ao ligar; fonte do francês; hospedagem). |
 | 2026-11-25 | m9–m11 fechados: um `.db` por idioma, baixado do GitHub Releases ao ligar o idioma; francês da edição francesa do Wiktionary (definições em francês, sem links). Modo escuro sobe para junto do francês, à espera dos tokens escuros no DESIGN. |
 | 2026-11-25 | Banco francês com as formas flexionadas (484 MB para baixar, em vez de 191 MB só com os lemas): achar a forma conjugada é o que mais ajuda no francês. |
+| 2026-11-25 | M9 revisto: o Apple ID gratuito fica, com o AltStore renovando a assinatura de 7 dias pelo Mac na mesma rede, em vez de reinstalar pelo Xcode toda semana. |
+| 2026-11-25 | Francês e modo escuro no app: pílula de idioma sempre visível (o opt-in foi revertido para seguir o protótipo), tela Languages com download do GitHub Releases, rota `word/[lang]/[word]`, cores dinâmicas. Novos módulos nativos: `expo-file-system`, `@expo/ui`. |
