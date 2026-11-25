@@ -28,18 +28,24 @@ sobre fundo claro, por isso cada uso tem seu tom.
 | `bg` | `#FAFAF9` | `#111317` | Fundo das telas |
 | `ink` | `#16181D` | `#ECEDEF` | Texto principal |
 | `muted` | `#5B606B` | `#A3A7B0` | Texto secundário, rótulos, exemplos |
-| `surface` | `#EFEFF1` | `#1E2128` | Fundo do controle de abas, número da definição |
-| `line` | `#E4E4E7` | `#2A2E36` | Divisórias, borda do footer |
-| `card` | `#FFFFFF` | — | Campo de busca, cartões, aba selecionada (claro) |
+| `surface` | `#EFEFF1` | `#1E2128` | Fundo do controle de abas, número da definição, esmaecido das abas |
+| `line` | `#E4E4E7` | `#2A2E36` | Divisórias, borda do footer e dos cartões |
+| `card` | `#FFFFFF` | `#1A1D22` | Campo de busca, cartões (lista de Languages), menu de idioma |
 | `tabOn` | `#FFFFFF` | `#2C3140` | Aba selecionada |
 | `accent` | `#B45309` (amber-700) | `#FBBF24` (amber-400) | Links (inclusive nas definições), ícones, botões de texto |
-| `accentPressed` | `#92400E` (amber-800) | — | Estado pressionado/hover |
-| `accentBorder` | `#D97706` (amber-600) | — | Borda do campo de busca focado |
-| `accentSoft` | `#FEF3C7` (amber-100) | — | Fundo de "Random word", chips de sugestão, toque em link |
-| `keyboard` | `#D1D3D9` | — | Só no mock: placeholder do teclado |
+| `accentPressed` | `#92400E` (amber-800) | `#FCD34D` (amber-300) | Estado pressionado do `accent` |
+| `accentBorder` | `#D97706` (amber-600) | `#F59E0B` (amber-500) | Borda do campo de busca, switch ligado, barra de progresso |
+| `accentSoft` | `#FEF3C7` (amber-100) | `#2B2412` | Fundo de "Random word", chips, pílula de idioma, toque em link, trilho do progresso |
+| `accentInk` | `#92400E` (amber-800) | `#FCD34D` (amber-300) | Texto sobre `accentSoft` (pílula de idioma) |
+| `badgeBg` | `#FDE68A` (amber-200) | `#3A2E12` | Fundo da sigla de idioma (`EN`, `FR`) |
+| `badgeInk` | `#92400E` (amber-800) | `#FBBF24` (amber-400) | Texto da sigla de idioma |
+| `switchOff` | `#D4D4D8` | `#3A3F4A` | Trilho do switch desligado |
+| `overlay` | `rgba(17,19,23,0.12)` | `rgba(0,0,0,0.5)` | Fundo atrás do menu de idioma |
+| `keyboard` | `#D1D3D9` | — | Só no mock: placeholder do teclado (não vai para o app) |
 
-**Modo escuro: Etapa 5**, não v1. Vai seguir o sistema (`useColorScheme`). A coluna Escuro já fica
-nos tokens; faltam os valores escuros de `card`, `accentPressed`, `accentBorder` e `accentSoft`.
+Os mesmos nomes valem nos dois temas: o app escolhe o conjunto pelo `useColorScheme()` do sistema,
+sem configuração no app. Todos os pares de texto/fundo acima passam 4,5:1 nos dois temas.
+No canvas, só o verbete (tela 6) e o footer têm versão escura; as outras telas usam esta tabela.
 
 ### Tipografia
 

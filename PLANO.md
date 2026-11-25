@@ -88,7 +88,9 @@ Pendências da Etapa 3, resolvidas:
 
 **5a. Outros idiomas (primeiro):** inglês e francês; português depois. Telas e regras: [DESIGN.md §6](docs/design/DESIGN.md#6-idiomas).
 - [x] Fechar m9, m10 e m11.
-- [ ] Gerar `cypher-fr.db` (script com o idioma como parâmetro) e publicar para download.
+- [x] Gerar `cypher-fr.db`: `python3 data/build_db.py data/raw/kaikki-fr.jsonl.gz data/out/cypher-fr.db fr` (~40 s). Dump de 25/11/2026: 2.083.570 verbetes, 2.628.098 definições, 484 MB. Busca por "a" (167 mil palavras): 111 ms no Mac.
+  Mantidas as formas flexionadas (1,9 milhão das definições, sobretudo conjugações): buscar "suis" leva a "être". Sem elas o banco teria 191 MB.
+- [ ] Publicar `cypher-fr.db` no GitHub Releases (m11).
 - [ ] Seletor de idioma no Início: pílula no cabeçalho com menu dos idiomas habilitados; a busca e o "Random word" usam o idioma escolhido. O verbete não troca de idioma.
 - [ ] Tela "Languages": ligar/desligar dicionários, baixar com progresso e cancelar, apagar ao desligar, pelo menos um sempre ligado. Português como "Coming soon".
 - [ ] Guardar os idiomas habilitados e o último usado (armazenamento gravável, separado dos bancos, que abrem só para leitura).
@@ -119,3 +121,4 @@ Pendências da Etapa 3, resolvidas:
 | 2026-11-25 | Etapa 4: app assinado com o Apple ID gratuito e instalado num iPhone 15 (build Release, 415 MB). Ícone "Cy" do DESIGN. Ajustes da conferência no simulador: teclado do Início, links só com cor, abas que rolam com bordas esmaecidas (`expo-linear-gradient`), barra do verbete com Back e nova busca. |
 | 2026-11-25 | Idiomas entram na Etapa 5, antes do polimento: inglês e francês, português depois. Troca de idioma só no Início, tela para escolher os idiomas habilitados. m9–m11 em aberto (um banco por idioma, baixado ao ligar; fonte do francês; hospedagem). |
 | 2026-11-25 | m9–m11 fechados: um `.db` por idioma, baixado do GitHub Releases ao ligar o idioma; francês da edição francesa do Wiktionary (definições em francês, sem links). Modo escuro sobe para junto do francês, à espera dos tokens escuros no DESIGN. |
+| 2026-11-25 | Banco francês com as formas flexionadas (484 MB para baixar, em vez de 191 MB só com os lemas): achar a forma conjugada é o que mais ajuda no francês. |
