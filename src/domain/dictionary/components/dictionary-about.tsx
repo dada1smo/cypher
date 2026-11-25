@@ -42,7 +42,7 @@ export function DictionaryAbout() {
       </View>
       <View style={styles.links}>
         <LinkRow label="Languages" onPress={() => router.push('/languages')} />
-        <LinkRow label="Source code on GitHub" onPress={() => Linking.openURL(SOURCE_URL)} />
+        <LinkRow label="Source code on GitHub" external onPress={() => Linking.openURL(SOURCE_URL)} />
       </View>
     </ScrollView>
   );
