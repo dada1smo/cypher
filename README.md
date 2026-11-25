@@ -3,7 +3,7 @@
 Offline, open-source dictionary app for iOS (React Native + Expo).
 v1: English only. Definitions come from [Wiktionary](https://en.wiktionary.org) via [kaikki.org](https://kaikki.org) (wiktextract), stored in a local SQLite database.
 
-Plano e decisões: [PLANO.md](PLANO.md).
+Plano e decisões: [PLANO.md](PLANO.md). Arquitetura e regras do app: [docs/architecture](docs/architecture/overview.md).
 
 ## License
 
